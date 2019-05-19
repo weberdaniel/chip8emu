@@ -1,42 +1,65 @@
 #include <cstdint>
 
+unsigned char chip8_fontset[80] =
+{
+  0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
+  0x20, 0x60, 0x20, 0x20, 0x70, // 1
+  0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
+  0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
+  0x90, 0x90, 0xF0, 0x10, 0x10, // 4
+  0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
+  0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
+  0xF0, 0x10, 0x20, 0x40, 0x40, // 7
+  0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
+  0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
+  0xF0, 0x90, 0xF0, 0x90, 0x90, // A
+  0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
+  0xF0, 0x80, 0x80, 0x80, 0xF0, // C
+  0xE0, 0x90, 0x90, 0x90, 0xE0, // D
+  0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
+  0xF0, 0x80, 0xF0, 0x80, 0x80  // F
+};
+
 struct Chip8 
 {
 
   constexpr void initialize() noexcept 
   {
     for( auto& x : memory ) x = 0;
-    for( auto& x : V ) x = 0;
+    for( auto& x : V )      x = 0;
+    for( auto& x : stack )  x = 0;
+    for( auto& x: gfx)      x = 0;
     pc = 0x200;
     sp = 0;
-    for( auto& x : stack ) x = 0;
     I = 0;
     delay_timer = 0;
     sound_timer= 0;
-    for( auto& x: gfx) x = 0;
   };
 
   constexpr void emulateCycle() noexcept 
   {
-  
+    opcode = memory[pc] << 8 | memory[pc+1];
+    if( opcode == 0xA2F0 ) I = opcode & 0x0FF;
+    pc += 2;
   };
 
+  // opcode
+  std::uint16_t opcode;
   // Chip8 has 4k of memory
-  std::uint_fast8_t memory[4069]; 
+  std::uint8_t memory[4069]; 
   // Chip8 has 15 8bit genereal purpose CPU registers. The 16th register
   // holds the carry flag.
-  std::uint_fast8_t V[16];
+  std::uint8_t V[16];
   // Chip8 has a program counter
-  std::uint_fast16_t pc;
+  std::uint16_t pc;
   // Chip8 has a stack pointer
-  std::uint_fast8_t sp;
-  std::uint_fast16_t stack[16];
+  std::uint8_t sp;
+  std::uint16_t stack[16];
   // Chip8 has a index register
-  std::uint_fast16_t I;
+  std::uint16_t I;
   // Timer registers
-  std::uint_fast8_t delay_timer;
-  std::uint_fast8_t sound_timer;
+  std::uint8_t delay_timer;
+  std::uint8_t sound_timer;
   // Chip8 has a grafic screen of black and white pixel
-  std::uint_fast8_t gfx[64 * 32];
-
+  std::uint8_t gfx[64 * 32];
 };
