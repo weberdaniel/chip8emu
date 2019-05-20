@@ -38,5 +38,10 @@ CoSMAC VIP and Telmac 1800 8-bit microcomputers in the mid-1970s.
 | FX15   | Timer   | delaytimer(Vx)| Set delay timer to Vx
 | FX18   | Sound   | soundtime(Vx)| Set sound timer to Vx
 | FX1E   | MEM     | I += Vx      | Adds VX to I.
-| FX29   | MEM     | I = sprite_addr[Vx] | Set I to location of srite for character in Vx, Chars 0-F are represented by a 4x5 font
+| FX29   | MEM     | I = spriteaddr[Vx] | Set I to location of srite for character in Vx, Chars 0-F are represented by a 4x5 font
+| FX33   | BCD     |              | Store binary-coded decimal rep of Vx at position I
+| FX55   | MEM     | regdump     | Store V0 to VX starting at I. offset from i is increased by 1 for each value
+| FX65   | MEM     | regload     | Fill V0 to Fx with values from memory starting at I. increase offset from I but do not touch I
+
                      
+
