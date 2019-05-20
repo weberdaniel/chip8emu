@@ -37,3 +37,6 @@ CoSMAC VIP and Telmac 1800 8-bit microcomputers in the mid-1970s.
 | FX0A   | KeyOp   | Vx=getkey()  | A key press is awaited, then stored in VX. (Blocking)
 | FX15   | Timer   | delaytimer(Vx)| Set delay timer to Vx
 | FX18   | Sound   | soundtime(Vx)| Set sound timer to Vx
+| FX1E   | MEM     | I += Vx      | Adds VX to I.
+| FX29   | MEM     | I = sprite_addr[Vx] | Set I to location of srite for character in Vx, Chars 0-F are represented by a 4x5 font
+                     
