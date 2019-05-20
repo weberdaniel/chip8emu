@@ -24,3 +24,16 @@ CoSMAC VIP and Telmac 1800 8-bit microcomputers in the mid-1970s.
 | 8XY4   | Math    | Vx += Vy     | Adds VY to Vx. VF is set to 1 if there is a carry, else to 0.
 | 8XY5   | Math    | Vx -= Vy     | VY is substracted from VX. VF is set to 0 when there's a borrow, and 1 when there isn't
 | 8XY6   | BitOp   | Vx >>= 1     | Store the least significant bit of VX in VF and shift VX to right by 1
+| 8XY7   | Math    | Vx=Vy-Vx     | Set VX to VY minus VX. VF is set to 0 when there's a borrow
+| 8XYE   | BitOp   | Vx<<=1       | Store MSB of VX in VF and shift VX to left by 1
+| 9XY0   | Cond    | if(Vx!=Vy)   | Skip next instruction if VX doesn't equal VY
+| ANNN   | MEM     | 1 = NNN      | Sets I to the address of NNN
+| BNNN   | Flow    | PC=V0+NNN    | Jump to address NNN plus V0
+| CXNN   | Rand    | Vx=rand()&NN | Sets Vx to the result of a bitwise and op. on a random number and NN
+| DXYN   | Disp    | draw(Vx,Vy,N)| Dra sprite a coord (Vx,Vy) with width of 8 pix and hight of N pix. 
+| EX9E   | KeyOp   | if(key()==Vx)| Skips next instruction if key stored in VX is pressed
+| EXA1   | KeyOp   | if(key()!=Vx)| Skips the next instruction if the key sotred in Vx isn't pressed
+| FX07   | Timer   | Vx=getdelay()| Set Vx to the value of the delay timer
+| FX0A   | KeyOp   | Vx=getkey()  | A key press is awaited, then stored in VX. (Blocking)
+| FX15   | Timer   | delaytimer(Vx)| Set delay timer to Vx
+| FX18   | Sound   | soundtime(Vx)| Set sound timer to Vx
