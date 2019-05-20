@@ -18,7 +18,7 @@ CoSMAC VIP and Telmac 1800 8-bit microcomputers in the mid-1970s.
 | 6XNN   | Const   | Vx = NN      | Sets Vx to NN
 | 7XNN   | Const   | Vx += NN     | Adds NN to VX. (Carry flag not changed)
 | 8XY0   | Assign  | Vx=Vy        | Sets VX to the value of VY
-| 8XY1   | BitOp   | Vx=Vx|Vy     | Sets VX to VX or VY
+| 8XY1   | BitOp   | Vx=Vx\|Vy     | Sets VX to VX or VY
 | 8XY2   | BitOp   | Vx=Vx&Vy     | Sets VX to VX and VY
 | 8XY3   | BitOp   | Vx=Vx^Vy     | Sets VX to VX xor VY
 | 8XY4   | Math    | Vx += Vy     | Adds VY to Vx. VF is set to 1 if there is a carry, else to 0.
