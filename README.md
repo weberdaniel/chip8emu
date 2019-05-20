@@ -22,3 +22,5 @@ CoSMAC VIP and Telmac 1800 8-bit microcomputers in the mid-1970s.
 | 8XY2   | BitOp   | Vx=Vx&Vy     | Sets VX to VX and VY
 | 8XY3   | BitOp   | Vx=Vx^Vy     | Sets VX to VX xor VY
 | 8XY4   | Math    | Vx += Vy     | Adds VY to Vx. VF is set to 1 if there is a carry, else to 0.
+| 8XY5   | Math    | Vx -= Vy     | VY is substracted from VX. VF is set to 0 when there's a borrow, and 1 when there isn't
+| 8XY6   | BitOp   | Vx >>= 1     | Store the least significant bit of VX in VF and shift VX to right by 1
