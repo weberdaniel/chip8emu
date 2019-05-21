@@ -4,6 +4,8 @@
 CHIP-8 is an interpreted programming language developed by Joseph Weisbecker. It was used on the 
 CoSMAC VIP and Telmac 1800 8-bit microcomputers in the mid-1970s. 
 
+## Opcodes
+
 
 | Opcode | Type    | Pseudocode   | Action
 |--------|---------|--------------|---------------------------------------------
@@ -43,5 +45,13 @@ CoSMAC VIP and Telmac 1800 8-bit microcomputers in the mid-1970s.
 | FX55   | MEM     | regdump     | Store V0 to VX starting at I. offset from i is increased by 1 for each value
 | FX65   | MEM     | regload     | Fill V0 to Fx with values from memory starting at I. increase offset from I but do not touch I
 
-                     
+## Registers
 
+The CHIP-8 has 16, 8-bit virtual registers: V0, V1, V2, V3, V4, V5, V6, V7, V8, V9, VA, VB, VC, VD, VE, VF.
+There is one single 16-bit register: I which is used for reading and writing to memory.
+There are two 8-bit timer registers that continuously count down at 60 Hz. The delay timer is good for time limiting
+the game of waiting brief periods. While the sound timer is non-zero a tone will be emitted.
+Contains 8 8bit user-flag registers R0-R7. Cannot be directly used, but registers V0-V7 can be saved and
+loaded from. 
+
+## Hints
