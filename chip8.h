@@ -1,4 +1,5 @@
 #include <cstdint>
+#include <iostream>
 
 unsigned char chip8_fontset[80] =
 {
@@ -29,18 +30,31 @@ struct Chip8
     for( auto& x : V )      x = 0;
     for( auto& x : stack )  x = 0;
     for( auto& x: gfx)      x = 0;
-    pc = 0x200;
-    sp = 0;
-    I = 0;
+    pc          = 0x200;
+    sp          = 0;
+    I           = 0;
     delay_timer = 0;
-    sound_timer= 0;
+    sound_timer = 0;
+    opcode      = 0;
   };
 
   constexpr void emulateCycle() noexcept 
   {
-    opcode = memory[pc] << 8 | memory[pc+1];
-    if( opcode == 0xA2F0 ) I = opcode & 0x0FF;
-    pc += 2;
+    //opcode = (( std::uint16_t) memory[pc] )<< 8 | memory[pc+1];
+    opcode = memory[pc];
+    opcode = opcode << 8;
+    opcode = opcode | memory[pc+1];
+
+    // ANNN: MEM: I = NNN, Set I to the Address of NNN.
+    if( (opcode & 0xA000 ) == 0xA000 ) {
+      I = opcode & 0x0FFF;
+      pc += 2;
+    }
+
+    // 1NNN: goto NNN
+    if( (opcode & 0x1000) == 0x1000 ) {
+      pc = opcode & 0x0FFF;
+    }
   };
 
   // opcode
