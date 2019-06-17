@@ -46,15 +46,22 @@ struct Chip8
     opcode = opcode | memory[pc+1];
 
     // ANNN: MEM: I = NNN, Set I to the Address of NNN.
-    if( (opcode & 0xA000 ) == 0xA000 ) {
+    if( (opcode & 0xF000 ) == 0xA000 ) {
       I = opcode & 0x0FFF;
       pc += 2;
     }
 
     // 1NNN: goto NNN
-    if( (opcode & 0x1000) == 0x1000 ) {
+    if( (opcode & 0xF000) == 0x1000 ) {
       pc = opcode & 0x0FFF;
     }
+    
+    // 3XNN: Skip next instruction if V[X] == NN
+    if( (opcode & 0xF000) == 0x3000 ) {
+      if( (opcode & 0x00FF) == V[(opcode & 0x0F00) >> 8])
+      pc += 4;
+    }
+
   };
 
   // opcode
