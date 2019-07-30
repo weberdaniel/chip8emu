@@ -48,24 +48,49 @@ struct Chip8
     // ANNN: MEM: I = NNN, Set I to the Address of NNN.
     if( (opcode & 0xF000 ) == 0xA000 ) {
       I = opcode & 0x0FFF;
-      pc += 2;
     }
 
     // 1NNN: goto NNN
     if( (opcode & 0xF000) == 0x1000 ) {
       pc = opcode & 0x0FFF;
+      pc -= 2;
     }
     
     // 3XNN: Skip next instruction if V[X] == NN
     if( (opcode & 0xF000) == 0x3000 ) {
       if( (opcode & 0x00FF) == V[(opcode & 0x0F00) >> 8])
-      pc += 4;
+      pc += 2;
+    }
+    
+    // 4XNN: Skip next instruction if V[X] does not equal NN
+    if( (opcode & 0xF000) == 0x4000 ) {
+      if( (opcode & 0x00FF) != V[(opcode & 0x0F00) >> 8])
+      pc += 2;
+    }
+    
+    // 5XY0: Skip next instruction if Vx equals Vy
+    if( (opcode & 0xF00F) == 0x5000 ) {
+      if( V[(opcode & 0x0F00) >> 8] == V[(opcode & 0x00F0) >> 4] ) {
+        pc += 2;
+      }
     }
 
+    // FX15 set delay timer to Vx
     if( (opcode & 0xF0FF ) == 0xF015 ) {
-       delay_timer = ((opcode & 0x0F00)  >> 8 );
+       delay_timer = V[(opcode & 0x0F00)  >> 8 ];
+    }	      
+    
+    // FX15 set sound timer to Vx
+    if( (opcode & 0xF0FF ) == 0xF018 ) {
+       sound_timer = V[(opcode & 0x0F00)  >> 8 ];
     }	      
 
+    // FX1E: adds Vx to I
+    if( (opcode & 0xF0FF ) == 0xF01E ) {
+       I += V[(opcode & 0x0F00) >> 8];
+    }
+
+    pc += 2;
   };
 
   // opcode
