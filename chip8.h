@@ -62,6 +62,10 @@ struct Chip8
       pc += 4;
     }
 
+    if( (opcode & 0xF0FF ) == 0xF015 ) {
+       delay_timer = ((opcode & 0x0F00)  >> 8 );
+    }	      
+
   };
 
   // opcode

@@ -76,3 +76,17 @@ BOOST_AUTO_TEST_CASE( test_skip_if_equal )
   emu.emulateCycle();
   BOOST_CHECK( emu.pc == 0x204 );
 }
+
+BOOST_AUTO_TEST_CASE( test_set_delay_timer )
+{
+  Chip8 emu;
+  emu.initialize();
+  emu.V[0x8] = 0x55;
+  emu.V[0x9] = 0x55;
+  emu.V[0x7] = 0x55;
+  emu.delay_timer = 0x00;
+  emu.memory[0x200] = 0xFA;
+  emu.memory[0x201] = 0x15;
+  emu.emulateCycle();
+  BOOST_CHECK( emu.delay_timer == 0x0A );
+}
