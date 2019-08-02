@@ -164,3 +164,41 @@ BOOST_AUTO_TEST_CASE( add_Vx_to_I )
   emu.emulateCycle();
   BOOST_CHECK( emu.I == 0x02 );
 }
+
+BOOST_AUTO_TEST_CASE( set_vx_to_nn)
+{
+  Chip8 emu;
+  emu.initialize();
+  emu.V[0x3] = 0x00;
+  emu.V[0x4] = 0x00;
+  emu.V[0x2] = 0x00;
+  emu.V[0x8] = 0x01;
+  emu.V[0x9] = 0x01;
+  emu.V[0x7] = 0x55;
+  emu.I = 0x01;
+  emu.delay_timer = 0x00;
+  emu.memory[0x200] = 0x63;
+  emu.memory[0x201] = 0x1E;
+  emu.emulateCycle();
+  BOOST_CHECK( emu.V[0x03] == 0x1E );
+}
+
+BOOST_AUTO_TEST_CASE( add_nn_to_vx )
+{
+  Chip8 emu;
+  emu.initialize();
+  emu.V[0x3] = 0x06;
+  emu.V[0x4] = 0x00;
+  emu.V[0x2] = 0x00;
+  emu.V[0x8] = 0x01;
+  emu.V[0x9] = 0x01;
+  emu.V[0x7] = 0x55;
+  emu.I = 0x01;
+  emu.delay_timer = 0x00;
+  emu.memory[0x200] = 0x73;
+  emu.memory[0x201] = 0x1E;
+  emu.emulateCycle();
+  BOOST_CHECK( emu.V[0x03] == 0x24 );
+}
+
+

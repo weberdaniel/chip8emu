@@ -68,6 +68,16 @@ struct Chip8
       pc += 2;
     }
     
+    // 6XNN: Set Vx to NN
+    if( (opcode & 0xF000) == 0x6000 ) {
+      V[(opcode & 0x0F00) >> 8] = (opcode & 0x00FF);
+    }
+    
+    // 7XNN: Add NN to Vx 
+    if( (opcode & 0xF000) == 0x7000 ) {
+      V[(opcode & 0x0F00) >> 8] += (opcode & 0x00FF);
+    }
+    
     // 5XY0: Skip next instruction if Vx equals Vy
     if( (opcode & 0xF00F) == 0x5000 ) {
       if( V[(opcode & 0x0F00) >> 8] == V[(opcode & 0x00F0) >> 4] ) {
