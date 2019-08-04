@@ -291,3 +291,70 @@ BOOST_AUTO_TEST_CASE( or_test )
   BOOST_CHECK( emu.V[0x9] == 0xFF );
   BOOST_CHECK( emu.V[0x2] == 0x11 );
 }
+
+BOOST_AUTO_TEST_CASE( assign_test )
+{
+  Chip8 emu;
+  emu.initialize();
+  emu.V[0x3] = 0x06;
+  emu.V[0x4] = 0x00;
+
+  emu.V[0x2] = 0x11;
+  emu.V[0x8] = 0x12;
+
+  emu.V[0x9] = 0xAA;
+  emu.V[0x7] = 0x55;
+
+  emu.I = 0x01;
+  emu.delay_timer = 0x00;
+  emu.memory[0x200] = 0x89;
+  emu.memory[0x201] = 0x70;
+
+  emu.memory[0x202] = 0x82;
+  emu.memory[0x203] = 0x80;
+
+  emu.emulateCycle();
+  emu.emulateCycle();
+  emu.emulateCycle();
+
+  BOOST_CHECK( emu.V[0x9] == 0x55 );
+  BOOST_CHECK( emu.V[0x2] == 0x12 );
+}
+
+BOOST_AUTO_TEST_CASE( x_plus_y_test )
+{
+  Chip8 emu;
+  emu.initialize();
+
+  emu.V[0x9] = 0xFF;
+  emu.V[0x7] = 0x55;
+
+  emu.I = 0x01;
+  emu.delay_timer = 0x00;
+  emu.memory[0x200] = 0x89;
+  emu.memory[0x201] = 0x74;
+
+  emu.emulateCycle();
+
+  BOOST_CHECK( emu.V[0x9] == 0x54 );
+  BOOST_CHECK( emu.V[16] == 1 );
+}
+
+BOOST_AUTO_TEST_CASE( x_minus_y_test )
+{
+  Chip8 emu;
+  emu.initialize();
+
+  emu.V[0x9] = 0x33;
+  emu.V[0x7] = 0x55;
+
+  emu.I = 0x01;
+  emu.delay_timer = 0x00;
+  emu.memory[0x200] = 0x89;
+  emu.memory[0x201] = 0x75;
+
+  emu.emulateCycle();
+
+  BOOST_CHECK( emu.V[0x9] == 0xDE );
+  BOOST_CHECK( emu.V[16] == 0 );
+}

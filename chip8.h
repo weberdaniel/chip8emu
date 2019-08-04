@@ -56,6 +56,16 @@ struct Chip8
       pc -= 2;
     }
     
+    // 2NNN: call subroutine at NNN: interpreter 
+    //       increments stack pointer then puts 
+    //       current pc on the top of the stack. 
+    //       the pc is then set to nnn.
+    if( (opcode & 0xF000) == 0x200 ) {
+      sp++;
+      stack[sp] = pc;
+      pc = (opcode & 0x0FFF);
+    }
+    
     // 3XNN: Skip next instruction if V[X] == NN
     if( (opcode & 0xF000) == 0x3000 ) {
       if( (opcode & 0x00FF) == V[(opcode & 0x0F00) >> 8])
@@ -84,6 +94,11 @@ struct Chip8
         pc += 2;
       }
     }
+    
+    // 8XY0: Vx = Vy
+    if( (opcode & 0xF00F) == 0x8000 ) {
+      V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x00F0) >> 4 ] ;
+    }
 
     // 8XY1: Vx = Vx & Vy
     if( (opcode & 0xF00F) == 0x8001)
@@ -104,6 +119,30 @@ struct Chip8
     {
       V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8 ] ^ 
 	                          V[(opcode & 0x00F0) >> 4 ] ;
+    }
+    
+    // 8XY4: Vx += Vy
+    if( (opcode & 0xF00F ) == 0x8004 )
+    {
+      //set carry
+      if (  V[(opcode & 0x00F0) >> 4 ] > (0xFF-V[(opcode & 0x0F00) >> 8]) ) {
+	V[16] = 1;
+      } else {
+	V[16] = 0;
+      }
+      V[(opcode & 0x0F00) >> 8] += V[(opcode & 0x00F0) >> 4 ] ;
+    }
+    
+    // 8XY5: Vx += Vy
+    if( (opcode & 0xF00F ) == 0x8005 )
+    {
+      //set borrow (inverse logic to carry!!)
+      if (  V[(opcode & 0x00F0) >> 4 ] > (V[(opcode & 0x0F00) >> 8]) ) {
+	V[16] = 0;
+      } else {
+	V[16] = 1;
+      }
+      V[(opcode & 0x0F00) >> 8] -= V[(opcode & 0x00F0) >> 4 ] ;
     }
 
     // FX15 set delay timer to Vx
