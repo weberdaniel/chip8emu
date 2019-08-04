@@ -1,35 +1,36 @@
 #include <cstdint>
 #include <iostream>
 
-unsigned char chip8_fontset[80] =
-{
-  0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
-  0x20, 0x60, 0x20, 0x20, 0x70, // 1
-  0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
-  0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
-  0x90, 0x90, 0xF0, 0x10, 0x10, // 4
-  0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
-  0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
-  0xF0, 0x10, 0x20, 0x40, 0x40, // 7
-  0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
-  0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
-  0xF0, 0x90, 0xF0, 0x90, 0x90, // A
-  0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
-  0xF0, 0x80, 0x80, 0x80, 0xF0, // C
-  0xE0, 0x90, 0x90, 0x90, 0xE0, // D
-  0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
-  0xF0, 0x80, 0xF0, 0x80, 0x80  // F
+// Copyright 2019 Daniel Weber
+
+#ifndef CHIP8_H_
+#define CHIP8_H_
+
+unsigned char chip8_fontset[80] = {
+0xF0, 0x90, 0x90, 0x90, 0xF0,  // 0
+0x20, 0x60, 0x20, 0x20, 0x70,  // 1
+0xF0, 0x10, 0xF0, 0x80, 0xF0,  // 2
+0xF0, 0x10, 0xF0, 0x10, 0xF0,  // 3
+0x90, 0x90, 0xF0, 0x10, 0x10,  // 4
+0xF0, 0x80, 0xF0, 0x10, 0xF0,  // 5
+0xF0, 0x80, 0xF0, 0x90, 0xF0,  // 6
+0xF0, 0x10, 0x20, 0x40, 0x40,  // 7
+0xF0, 0x90, 0xF0, 0x90, 0xF0,  // 8
+0xF0, 0x90, 0xF0, 0x10, 0xF0,  // 9
+0xF0, 0x90, 0xF0, 0x90, 0x90,  // A
+0xE0, 0x90, 0xE0, 0x90, 0xE0,  // B
+0xF0, 0x80, 0x80, 0x80, 0xF0,  // C
+0xE0, 0x90, 0x90, 0x90, 0xE0,  // D
+0xF0, 0x80, 0xF0, 0x80, 0xF0,  // E
+0xF0, 0x80, 0xF0, 0x80, 0x80   // F
 };
 
-struct Chip8 
-{
-
-  constexpr void initialize() noexcept 
-  {
-    for( auto& x : memory ) x = 0;
-    for( auto& x : V )      x = 0;
-    for( auto& x : stack )  x = 0;
-    for( auto& x: gfx)      x = 0;
+struct Chip8 {
+  constexpr void initialize() noexcept {
+    for ( auto& x : memory ) x = 0;
+    for ( auto& x : V )      x = 0;
+    for ( auto& x : stack )  x = 0;
+    for ( auto& x : gfx)      x = 0;
     pc          = 0x200;
     sp          = 0;
     I           = 0;
@@ -38,125 +39,118 @@ struct Chip8
     opcode      = 0;
   };
 
-  constexpr void emulateCycle() noexcept 
-  {
-    //opcode = (( std::uint16_t) memory[pc] )<< 8 | memory[pc+1];
+  constexpr void emulateCycle() noexcept {
     opcode = memory[pc];
     opcode = opcode << 8;
     opcode = opcode | memory[pc+1];
 
     // ANNN: MEM: I = NNN, Set I to the Address of NNN.
-    if( (opcode & 0xF000 ) == 0xA000 ) {
+    if ((opcode & 0xF000) == 0xA000) {
       I = opcode & 0x0FFF;
     }
 
     // 1NNN: goto NNN
-    if( (opcode & 0xF000) == 0x1000 ) {
+    if ((opcode & 0xF000) == 0x1000) {
       pc = opcode & 0x0FFF;
       pc -= 2;
     }
-    
-    // 2NNN: call subroutine at NNN: interpreter 
-    //       increments stack pointer then puts 
-    //       current pc on the top of the stack. 
+
+    // 2NNN: call subroutine at NNN: interpreter
+    //       increments stack pointer then puts
+    //       current pc on the top of the stack.
     //       the pc is then set to nnn.
-    if( (opcode & 0xF000) == 0x200 ) {
+    if ((opcode & 0xF000) == 0x200) {
       sp++;
       stack[sp] = pc;
       pc = (opcode & 0x0FFF);
     }
-    
+
     // 3XNN: Skip next instruction if V[X] == NN
-    if( (opcode & 0xF000) == 0x3000 ) {
-      if( (opcode & 0x00FF) == V[(opcode & 0x0F00) >> 8])
+    if ((opcode & 0xF000) == 0x3000) {
+      if ((opcode & 0x00FF) == V[(opcode & 0x0F00) >> 8])
       pc += 2;
     }
-    
+
     // 4XNN: Skip next instruction if V[X] does not equal NN
-    if( (opcode & 0xF000) == 0x4000 ) {
-      if( (opcode & 0x00FF) != V[(opcode & 0x0F00) >> 8])
+    if ((opcode & 0xF000) == 0x4000) {
+      if ((opcode & 0x00FF) != V[(opcode & 0x0F00) >> 8])
       pc += 2;
     }
-    
+
     // 6XNN: Set Vx to NN
-    if( (opcode & 0xF000) == 0x6000 ) {
+    if ((opcode & 0xF000) == 0x6000) {
       V[(opcode & 0x0F00) >> 8] = (opcode & 0x00FF);
     }
-    
-    // 7XNN: Add NN to Vx 
-    if( (opcode & 0xF000) == 0x7000 ) {
+
+    // 7XNN: Add NN to Vx
+    if ((opcode & 0xF000) == 0x7000) {
       V[(opcode & 0x0F00) >> 8] += (opcode & 0x00FF);
     }
-    
+
     // 5XY0: Skip next instruction if Vx equals Vy
-    if( (opcode & 0xF00F) == 0x5000 ) {
-      if( V[(opcode & 0x0F00) >> 8] == V[(opcode & 0x00F0) >> 4] ) {
+    if ((opcode & 0xF00F) == 0x5000) {
+      if (V[(opcode & 0x0F00) >> 8] == V[(opcode & 0x00F0) >> 4]) {
         pc += 2;
       }
     }
-    
+
     // 8XY0: Vx = Vy
-    if( (opcode & 0xF00F) == 0x8000 ) {
-      V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x00F0) >> 4 ] ;
+    if ((opcode & 0xF00F) == 0x8000) {
+      V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x00F0) >> 4 ];
     }
 
     // 8XY1: Vx = Vx & Vy
-    if( (opcode & 0xF00F) == 0x8001)
-    {
-      V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8 ] | 
-	                          V[(opcode & 0x00F0) >> 4 ] ;
+    if ((opcode & 0xF00F) == 0x8001) {
+      V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8 ] |
+                                  V[(opcode & 0x00F0) >> 4 ];
     }
-    
+
     // 8XY2: Vx = Vx & Vy
-    if( (opcode & 0xF00F) == 0x8002)
-    {
-      V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8 ] & 
-	                          V[(opcode & 0x00F0) >> 4 ] ;
+    if ((opcode & 0xF00F) == 0x8002) {
+      V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8 ] &
+                                  V[(opcode & 0x00F0) >> 4 ];
     }
 
     // 8XY3: Vx = Vx ^ Vy
-    if( (opcode & 0xF00F ) == 0x8003 )
-    {
-      V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8 ] ^ 
-	                          V[(opcode & 0x00F0) >> 4 ] ;
+    if ((opcode & 0xF00F) == 0x8003) {
+      V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8 ] ^
+                                  V[(opcode & 0x00F0) >> 4 ];
     }
-    
+
     // 8XY4: Vx += Vy
-    if( (opcode & 0xF00F ) == 0x8004 )
-    {
-      //set carry
-      if (  V[(opcode & 0x00F0) >> 4 ] > (0xFF-V[(opcode & 0x0F00) >> 8]) ) {
-	V[16] = 1;
+    if ((opcode & 0xF00F) == 0x8004) {
+      // set carry
+      if (V[(opcode & 0x00F0) >> 4] > (0xFF-V[(opcode & 0x0F00) >> 8])) {
+        V[16] = 1;
       } else {
-	V[16] = 0;
+        V[16] = 0;
       }
-      V[(opcode & 0x0F00) >> 8] += V[(opcode & 0x00F0) >> 4 ] ;
+      V[(opcode & 0x0F00) >> 8] += V[(opcode & 0x00F0) >> 4 ];
     }
-    
+
     // 8XY5: Vx += Vy
-    if( (opcode & 0xF00F ) == 0x8005 )
-    {
-      //set borrow (inverse logic to carry!!)
-      if (  V[(opcode & 0x00F0) >> 4 ] > (V[(opcode & 0x0F00) >> 8]) ) {
-	V[16] = 0;
+    if ((opcode & 0xF00F) == 0x8005) {
+      // set borrow (inverse logic to carry!!)
+      if (V[(opcode & 0x00F0) >> 4 ] > (V[(opcode & 0x0F00) >> 8])) {
+        V[16] = 0;
       } else {
-	V[16] = 1;
+        V[16] = 1;
       }
-      V[(opcode & 0x0F00) >> 8] -= V[(opcode & 0x00F0) >> 4 ] ;
+      V[(opcode & 0x0F00) >> 8] -= V[(opcode & 0x00F0) >> 4 ];
     }
 
     // FX15 set delay timer to Vx
-    if( (opcode & 0xF0FF ) == 0xF015 ) {
+    if ((opcode & 0xF0FF) == 0xF015) {
        delay_timer = V[(opcode & 0x0F00)  >> 8 ];
-    }	      
-    
+    }
+
     // FX15 set sound timer to Vx
-    if( (opcode & 0xF0FF ) == 0xF018 ) {
+    if ((opcode & 0xF0FF) == 0xF018) {
        sound_timer = V[(opcode & 0x0F00)  >> 8 ];
-    }	      
+    }
 
     // FX1E: adds Vx to I
-    if( (opcode & 0xF0FF ) == 0xF01E ) {
+    if ((opcode & 0xF0FF) == 0xF01E) {
        I += V[(opcode & 0x0F00) >> 8];
     }
 
@@ -166,7 +160,7 @@ struct Chip8
   // opcode
   std::uint16_t opcode;
   // Chip8 has 4k of memory
-  std::uint8_t memory[4069]; 
+  std::uint8_t memory[4069];
   // Chip8 has 15 8bit genereal purpose CPU registers. The 16th register
   // holds the carry flag.
   std::uint8_t V[16];
@@ -183,3 +177,5 @@ struct Chip8
   // Chip8 has a grafic screen of black and white pixel
   std::uint8_t gfx[64 * 32];
 };
+
+#endif  // CHIP8_H_
