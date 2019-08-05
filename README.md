@@ -26,7 +26,7 @@ CoSMAC VIP and Telmac 1800 8-bit microcomputers in the mid-1970s.
 | 8XY4   | ok      | Math    | Vx += Vy     | Adds VY to Vx. VF is set to 1 if there is a carry, else to 0.
 | 8XY5   | ok      | Math    | Vx -= Vy     | VY is substracted from VX. VF is set to 0 when there's a borrow, and 1 when there isn't
 | 8XY6   |         | BitOp   | Vx >>= 1     | Store the least significant bit of VX in VF and shift VX to right by 1
-| 8XY7   |         | Math    | Vx=Vy-Vx     | Set VX to VY minus VX. VF is set to 0 when there's a borrow
+| 8XY7   | ok      | Math    | Vx=Vy-Vx     | Set VX to VY minus VX. VF is set to 0 when there's a borrow
 | 8XYE   |         | BitOp   | Vx<<=1       | Store MSB of VX in VF and shift VX to left by 1
 | 9XY0   |         | Cond    | if(Vx!=Vy)   | Skip next instruction if VX doesn't equal VY
 | ANNN   |  ok     | MEM     | 1 = NNN      | Sets I to the address of NNN
