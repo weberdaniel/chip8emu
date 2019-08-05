@@ -149,6 +149,12 @@ struct Chip8 {
       }
       V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x00F0) >> 4 ] - V[(opcode & 0x0F00) >> 8];
     }
+    
+    // 9XY0: skip next if Vx != Vy
+    if ((opcode & 0xF00F) == 0x9000) {
+      if(V[(opcode & 0x0F00) >> 8] != V[(opcode & 0x00F0) >> 4 ]) 
+        pc += 2;
+    }
 
     // FX15 set delay timer to Vx
     if ((opcode & 0xF0FF) == 0xF015) {

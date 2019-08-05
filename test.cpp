@@ -377,3 +377,23 @@ BOOST_AUTO_TEST_CASE( VxisVyminusVx  )
   BOOST_CHECK( emu.V[0x9] == 0xFE );
   BOOST_CHECK( emu.V[16] == 0 );
 }
+
+BOOST_AUTO_TEST_CASE( test_9XY0 )
+{
+  Chip8 emu;
+  emu.initialize();
+  emu.I = 0x01;
+  emu.delay_timer = 0x00;
+  emu.V[0x9] = 0x10;
+  emu.V[0x7] = 0x10;
+  emu.memory[0x200] = 0x99;
+  emu.memory[0x201] = 0x70;
+  emu.emulateCycle();
+  BOOST_CHECK( emu.pc = 0x202 );
+  emu.V[0x9] = 0x12;
+  emu.V[0x7] = 0x10;
+  emu.memory[0x202] = 0x99;
+  emu.memory[0x203] = 0x70;
+  emu.emulateCycle();
+  BOOST_CHECK( emu.pc = 0x206 );
+}
