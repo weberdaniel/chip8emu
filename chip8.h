@@ -1,5 +1,7 @@
 #include <cstdint>
+#include <random>
 #include <iostream>
+#include <cstdlib>
 
 // Copyright 2019 Daniel Weber
 
@@ -39,7 +41,7 @@ struct Chip8 {
     opcode      = 0;
   };
 
-  constexpr void emulateCycle() noexcept {
+  constexpr void emulateCycle(bool test = false) noexcept {
     opcode = memory[pc];
     opcode = opcode << 8;
     opcode = opcode | memory[pc+1];
@@ -47,6 +49,24 @@ struct Chip8 {
     // ANNN: MEM: I = NNN, Set I to the Address of NNN.
     if ((opcode & 0xF000) == 0xA000) {
       I = opcode & 0x0FFF;
+    }
+    
+    // BNNN: PC = V0+NNN
+    if ((opcode & 0xF000) == 0xB000) {
+      pc = V[0] + (opcode & 0x0FFF);
+    }
+    
+    // CXNN: Vx = rand() & NN
+    if ((opcode & 0xF000) == 0xC000) {
+      std::uint8_t t = 0;
+
+      if (test == true) { 
+        t = 0x55; 
+      } else {
+	t = rand() % 255;
+      } 
+
+      V[(opcode & 0x0F00) >> 8] = (t & (opcode & 0x00FF));
     }
  
     // FX07: Vx = getdelay()
