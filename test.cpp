@@ -397,3 +397,17 @@ BOOST_AUTO_TEST_CASE( test_9XY0 )
   emu.emulateCycle();
   BOOST_CHECK( emu.pc = 0x206 );
 }
+
+BOOST_AUTO_TEST_CASE( test_FX07 )
+{
+  Chip8 emu;
+  emu.initialize();
+  emu.I = 0x01;
+  emu.delay_timer = 0x11;
+  emu.V[0x9] = 0x00;
+  emu.V[0x7] = 0x00;
+  emu.memory[0x200] = 0xF9;
+  emu.memory[0x201] = 0x07;
+  emu.emulateCycle();
+  BOOST_CHECK( emu.V[0x9] = 0x11 );
+}

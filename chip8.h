@@ -48,6 +48,11 @@ struct Chip8 {
     if ((opcode & 0xF000) == 0xA000) {
       I = opcode & 0x0FFF;
     }
+ 
+    // FX07: Vx = getdelay()
+    if ((opcode & 0xF0FF) == 0xF007) {
+      V[((opcode & 0x0F00) >> 8)] = delay_timer;
+    }
 
     // 1NNN: goto NNN
     if ((opcode & 0xF000) == 0x1000) {
