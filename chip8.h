@@ -46,6 +46,13 @@ struct Chip8 {
     opcode = opcode << 8;
     opcode = opcode | memory[pc+1];
 
+    // 8XYE: Store MSB of VX in VF and shift VX to left by 1
+    // TODO: test
+    if ((opcode & 0xF00F) == 0x800E) {
+      V[0xF] = V[(opcode & 0x0F00) >> 8] & 128;
+      V[(opcode & 0x0F00)] = V[(opcode & 0x0F00)] << 1;
+    }
+
     // ANNN: MEM: I = NNN, Set I to the Address of NNN.
     if ((opcode & 0xF000) == 0xA000) {
       I = opcode & 0x0FFF;
