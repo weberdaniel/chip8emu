@@ -46,15 +46,27 @@ struct Chip8 {
     opcode = opcode << 8;
     opcode = opcode | memory[pc+1];
 
+    // FX55: Store V0 to VX in memory, starting at I.
+    if ((opcode & 0xF0FF) == 0xF055) {
+      for( int i = 0; i <= (opcode & 0x0F00); i++ ) {
+        memory[I+i] = V[i];
+      }
+    }
+    
+    // FX65: Fill V0 to VX with values starting at I.
+    if ((opcode & 0xF0FF) == 0xF055) {
+      for( int i = 0; i <= (opcode & 0x0F00); i++ ) {
+        V[i] = memory[I+i];
+      }
+    }
+
     // 8XYE: Store MSB of VX in VF and shift VX to left by 1
-    // TODO: test
     if ((opcode & 0xF00F) == 0x800E) {
-      V[0xF] = V[(opcode & 0x0F00) >> 8] & 128;
+      V[0xF] = (V[(opcode & 0x0F00) >> 8] & 128) >> 7;
       V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] << 1;
     }
     
     // 8XY6: Store LSB of VX in VF and shift VX to right by 1
-    // TODO: test
     if ((opcode & 0xF00F) == 0x8006) {
       V[0xF] = V[(opcode & 0x0F00) >> 8] & 1;
       V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] >> 1;

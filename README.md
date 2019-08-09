@@ -25,9 +25,9 @@ CoSMAC VIP and Telmac 1800 8-bit microcomputers in the mid-1970s.
 | 8XY3   | ok      | BitOp   | Vx=Vx^Vy     | Sets VX to VX xor VY
 | 8XY4   | ok      | Math    | Vx += Vy     | Adds VY to Vx. VF is set to 1 if there is a carry, else to 0.
 | 8XY5   | ok      | Math    | Vx -= Vy     | VY is substracted from VX. VF is set to 0 when there's a borrow, and 1 when there isn't
-| 8XY6   | testing | BitOp   | Vx >>= 1     | Store the least significant bit of VX in VF and shift VX to right by 1
+| 8XY6   | ok      | BitOp   | Vx >>= 1     | Store the least significant bit of VX in VF and shift VX to right by 1
 | 8XY7   | ok      | Math    | Vx=Vy-Vx     | Set VX to VY minus VX. VF is set to 0 when there's a borrow
-| 8XYE   | testing | BitOp   | Vx<<=1       | Store MSB of VX in VF and shift VX to left by 1
+| 8XYE   | ok      | BitOp   | Vx<<=1       | Store MSB of VX in VF and shift VX to left by 1
 | 9XY0   | ok      | Cond    | if(Vx!=Vy)   | Skip next instruction if VX doesn't equal VY
 | ANNN   | ok      | MEM     | 1 = NNN      | Sets I to the address of NNN
 | BNNN   | ok      | Flow    | PC=V0+NNN    | Jump to address NNN plus V0
@@ -42,8 +42,8 @@ CoSMAC VIP and Telmac 1800 8-bit microcomputers in the mid-1970s.
 | FX1E   | ok      | MEM     | I += Vx      | Adds VX to I.
 | FX29   |         | MEM     | I = spriteaddr[Vx] | Set I to location of srite for character in Vx, Chars 0-F are represented by a 4x5 font
 | FX33   |         | BCD     |              | Store binary-coded decimal rep of Vx at position I
-| FX55   |         | MEM     | regdump     | Store V0 to VX starting at I. offset from i is increased by 1 for each value
-| FX65   |         | MEM     | regload     | Fill V0 to Fx with values from memory starting at I. increase offset from I but do not touch I
+| FX55   | testing | MEM     | regdump      | Store V0 to VX starting at I. offset from i is increased by 1 for each value
+| FX65   | testing | MEM     | regload      | Fill V0 to Fx with values from memory starting at I. increase offset from I but do not touch I
 
 ## Registers
 
