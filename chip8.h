@@ -50,14 +50,14 @@ struct Chip8 {
     // TODO: test
     if ((opcode & 0xF00F) == 0x800E) {
       V[0xF] = V[(opcode & 0x0F00) >> 8] & 128;
-      V[(opcode & 0x0F00)] = V[(opcode & 0x0F00)] << 1;
+      V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] << 1;
     }
     
     // 8XY6: Store LSB of VX in VF and shift VX to right by 1
     // TODO: test
-    if ((opcode & 0xF00F) == 0x800E) {
+    if ((opcode & 0xF00F) == 0x8006) {
       V[0xF] = V[(opcode & 0x0F00) >> 8] & 1;
-      V[(opcode & 0x0F00)] = V[(opcode & 0x0F00)] >> 1;
+      V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] >> 1;
     }
 
     // ANNN: MEM: I = NNN, Set I to the Address of NNN.

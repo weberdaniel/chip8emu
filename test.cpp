@@ -445,3 +445,35 @@ BOOST_AUTO_TEST_CASE( test_CXNN )
   emu.emulateCycle(true);
   BOOST_CHECK( emu.V[0x7] == 0x55  );
 }
+
+BOOST_AUTO_TEST_CASE( test_8xye )
+{
+  Chip8 emu;
+  emu.initialize();
+  emu.I = 0x01;
+  emu.delay_timer = 0x11;
+  emu.V[0] = 0x01;
+  emu.V[0xF] = 0x0;
+  emu.V[0x9] = 0xFF;
+  emu.memory[0x200] = 0x89;
+  emu.memory[0x201] = 0xFE;
+  emu.emulateCycle();
+  BOOST_CHECK( emu.V[0x9] == 0xFE );
+  BOOST_CHECK( emu.V[0xF] == 1    );
+}
+
+BOOST_AUTO_TEST_CASE( test_8xy6 )
+{
+  Chip8 emu;
+  emu.initialize();
+  emu.I = 0x01;
+  emu.delay_timer = 0x11;
+  emu.V[0] = 0x01;
+  emu.V[0xF] = 0x0;
+  emu.V[0x9] = 0xFF;
+  emu.memory[0x200] = 0x89;
+  emu.memory[0x201] = 0xF6;
+  emu.emulateCycle();
+  BOOST_CHECK( emu.V[0x9] == 0x7F );
+  BOOST_CHECK( emu.V[0xF] == 1    );
+}
