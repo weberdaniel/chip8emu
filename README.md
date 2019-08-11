@@ -42,8 +42,8 @@ CoSMAC VIP and Telmac 1800 8-bit microcomputers in the mid-1970s.
 | FX1E   | ok      | MEM     | I += Vx      | Adds VX to I.
 | FX29   |         | MEM     | I = spriteaddr[Vx] | Set I to location of srite for character in Vx, Chars 0-F are represented by a 4x5 font
 | FX33   |         | BCD     |              | Store binary-coded decimal rep of Vx at position I
-| FX55   | testing | MEM     | regdump      | Store V0 to VX starting at I. offset from i is increased by 1 for each value
-| FX65   | testing | MEM     | regload      | Fill V0 to Fx with values from memory starting at I. increase offset from I but do not touch I
+| FX55   | tbt        | MEM     | regdump      | Store V0 to VX starting at I. offset from i is increased by 1 for each value
+| FX65   | tbt        | MEM     | regload      | Fill V0 to Fx with values from memory starting at I. increase offset from I but do not touch I
 
 ## Registers
 
