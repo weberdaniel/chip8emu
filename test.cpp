@@ -20,11 +20,14 @@ struct cout_redirect {
 
 BOOST_AUTO_TEST_CASE( test_init )
 {
-  Chip8 emu;
+  chip8::emulator emu;
   emu.initialize();
+  int i = 0;
+  for( i = 0; i < 80; i++)
+    BOOST_CHECK( emu.memory[i] == chip8::fontset[i]);
 
-  for( auto& x : emu.memory )
-    BOOST_CHECK( x == 0);
+  for( i = 80; i < sizeof(emu.memory); i++)
+    BOOST_CHECK( emu.memory[i] == 0);
 
   for( auto& x : emu.V )
     BOOST_CHECK( x == 0);
@@ -45,7 +48,7 @@ BOOST_AUTO_TEST_CASE( test_init )
 BOOST_AUTO_TEST_CASE( test_set_index )
 {
 
-  Chip8 emu;
+  chip8::emulator emu;
   emu.initialize();
   emu.memory[0x200] = 0xA0;
   emu.memory[0x201] = 0x9C;
@@ -56,7 +59,7 @@ BOOST_AUTO_TEST_CASE( test_set_index )
 
 BOOST_AUTO_TEST_CASE( test_goto )
 {
-  Chip8 emu;
+  chip8::emulator emu;
   emu.initialize();
   emu.memory[0x200] = 0x14;
   emu.memory[0x201] = 0x11;
@@ -66,7 +69,7 @@ BOOST_AUTO_TEST_CASE( test_goto )
 
 BOOST_AUTO_TEST_CASE( test_skip_if_equal )
 {
-  Chip8 emu;
+  chip8::emulator emu;
   emu.initialize();
   emu.V[0x8] = 0x55;
   emu.V[0x9] = 0x55;
@@ -79,7 +82,7 @@ BOOST_AUTO_TEST_CASE( test_skip_if_equal )
 
 BOOST_AUTO_TEST_CASE( test_set_delay_timer )
 {
-  Chip8 emu;
+  chip8::emulator emu;
   emu.initialize();
   emu.V[0x8] = 0x55;
   emu.V[0x9] = 0x55;
@@ -93,7 +96,7 @@ BOOST_AUTO_TEST_CASE( test_set_delay_timer )
 
 BOOST_AUTO_TEST_CASE( test_set_sound_timer )
 {
-  Chip8 emu;
+  chip8::emulator emu;
   emu.initialize();
   emu.V[0x8] = 0x55;
   emu.V[0x9] = 0x53;
@@ -107,7 +110,7 @@ BOOST_AUTO_TEST_CASE( test_set_sound_timer )
 
 BOOST_AUTO_TEST_CASE( test_add_vx_to_i)
 {
-  Chip8 emu;
+  chip8::emulator emu;
   emu.initialize();
   emu.V[0x8] = 0x55;
   emu.V[0x9] = 0x53;
@@ -122,7 +125,7 @@ BOOST_AUTO_TEST_CASE( test_add_vx_to_i)
 
 BOOST_AUTO_TEST_CASE( skip_next_instruction_if_vx_equals_vy  )
 {
-  Chip8 emu;
+  chip8::emulator emu;
   emu.initialize();
   emu.V[0x8] = 0x55;
   emu.V[0x9] = 0x55;
@@ -137,7 +140,7 @@ BOOST_AUTO_TEST_CASE( skip_next_instruction_if_vx_equals_vy  )
 
 BOOST_AUTO_TEST_CASE( do_not_skip_next_instruction_if_vx_not_equals_vy  )
 {
-  Chip8 emu;
+  chip8::emulator emu;
   emu.initialize();
   emu.V[0x8] = 0x51;
   emu.V[0x9] = 0x55;
@@ -152,7 +155,7 @@ BOOST_AUTO_TEST_CASE( do_not_skip_next_instruction_if_vx_not_equals_vy  )
 
 BOOST_AUTO_TEST_CASE( add_Vx_to_I )
 {
-  Chip8 emu;
+  chip8::emulator emu;
   emu.initialize();
   emu.V[0x8] = 0x01;
   emu.V[0x9] = 0x01;
@@ -167,7 +170,7 @@ BOOST_AUTO_TEST_CASE( add_Vx_to_I )
 
 BOOST_AUTO_TEST_CASE( set_vx_to_nn)
 {
-  Chip8 emu;
+  chip8::emulator emu;
   emu.initialize();
   emu.V[0x3] = 0x00;
   emu.V[0x4] = 0x00;
@@ -185,7 +188,7 @@ BOOST_AUTO_TEST_CASE( set_vx_to_nn)
 
 BOOST_AUTO_TEST_CASE( add_nn_to_vx )
 {
-  Chip8 emu;
+  chip8::emulator emu;
   emu.initialize();
   emu.V[0x3] = 0x06;
   emu.V[0x4] = 0x00;
@@ -203,7 +206,7 @@ BOOST_AUTO_TEST_CASE( add_nn_to_vx )
 
 BOOST_AUTO_TEST_CASE( xortest )
 {
-  Chip8 emu;
+  chip8::emulator emu;
   emu.initialize();
   emu.V[0x3] = 0x06;
   emu.V[0x4] = 0x00;
@@ -235,7 +238,7 @@ BOOST_AUTO_TEST_CASE( xortest )
 
 BOOST_AUTO_TEST_CASE( and_test )
 {
-  Chip8 emu;
+  chip8::emulator emu;
   emu.initialize();
   emu.V[0x3] = 0x06;
   emu.V[0x4] = 0x00;
@@ -265,7 +268,7 @@ BOOST_AUTO_TEST_CASE( and_test )
 
 BOOST_AUTO_TEST_CASE( or_test )
 {
-  Chip8 emu;
+  chip8::emulator emu;
   emu.initialize();
   emu.V[0x3] = 0x06;
   emu.V[0x4] = 0x00;
@@ -294,7 +297,7 @@ BOOST_AUTO_TEST_CASE( or_test )
 
 BOOST_AUTO_TEST_CASE( assign_test )
 {
-  Chip8 emu;
+  chip8::emulator emu;
   emu.initialize();
   emu.V[0x3] = 0x06;
   emu.V[0x4] = 0x00;
@@ -323,7 +326,7 @@ BOOST_AUTO_TEST_CASE( assign_test )
 
 BOOST_AUTO_TEST_CASE( x_plus_y_test )
 {
-  Chip8 emu;
+  chip8::emulator emu;
   emu.initialize();
 
   emu.V[0x9] = 0xFF;
@@ -342,7 +345,7 @@ BOOST_AUTO_TEST_CASE( x_plus_y_test )
 
 BOOST_AUTO_TEST_CASE( x_minus_y_test )
 {
-  Chip8 emu;
+  chip8::emulator emu;
   emu.initialize();
 
   emu.V[0x9] = 0x33;
@@ -361,7 +364,7 @@ BOOST_AUTO_TEST_CASE( x_minus_y_test )
 
 BOOST_AUTO_TEST_CASE( VxisVyminusVx  )
 {
-  Chip8 emu;
+  chip8::emulator emu;
   emu.initialize();
 
   emu.V[0x9] = 0x12;
@@ -380,7 +383,7 @@ BOOST_AUTO_TEST_CASE( VxisVyminusVx  )
 
 BOOST_AUTO_TEST_CASE( test_9XY0 )
 {
-  Chip8 emu;
+  chip8::emulator emu;
   emu.initialize();
   emu.I = 0x01;
   emu.delay_timer = 0x00;
@@ -400,7 +403,7 @@ BOOST_AUTO_TEST_CASE( test_9XY0 )
 
 BOOST_AUTO_TEST_CASE( test_FX07 )
 {
-  Chip8 emu;
+  chip8::emulator emu;
   emu.initialize();
   emu.I = 0x01;
   emu.delay_timer = 0x11;
@@ -414,7 +417,7 @@ BOOST_AUTO_TEST_CASE( test_FX07 )
 
 BOOST_AUTO_TEST_CASE( test_BNNN )
 {
-  Chip8 emu;
+  chip8::emulator emu;
   emu.initialize();
   emu.I = 0x01;
   emu.delay_timer = 0x11;
@@ -429,7 +432,7 @@ BOOST_AUTO_TEST_CASE( test_BNNN )
 
 BOOST_AUTO_TEST_CASE( test_CXNN )
 {
-  Chip8 emu;
+  chip8::emulator emu;
   emu.initialize();
   emu.I = 0x01;
   emu.delay_timer = 0x11;
@@ -448,7 +451,7 @@ BOOST_AUTO_TEST_CASE( test_CXNN )
 
 BOOST_AUTO_TEST_CASE( test_8xye )
 {
-  Chip8 emu;
+  chip8::emulator emu;
   emu.initialize();
   emu.I = 0x01;
   emu.delay_timer = 0x11;
@@ -464,7 +467,7 @@ BOOST_AUTO_TEST_CASE( test_8xye )
 
 BOOST_AUTO_TEST_CASE( test_8xy6 )
 {
-  Chip8 emu;
+  chip8::emulator emu;
   emu.initialize();
   emu.I = 0x01;
   emu.delay_timer = 0x11;
@@ -480,7 +483,7 @@ BOOST_AUTO_TEST_CASE( test_8xy6 )
 
 BOOST_AUTO_TEST_CASE( clear_screen )
 {
-  Chip8 emu;
+  chip8::emulator emu;
   emu.initialize();
   emu.I = 0x01;
   emu.delay_timer = 0x11;

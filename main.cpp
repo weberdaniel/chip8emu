@@ -3,7 +3,7 @@
 
 int main() 
 {
-  Chip8 emu;
+  chip8::emulator emu;
   emu.initialize();
 
   std::cout << "hello world";

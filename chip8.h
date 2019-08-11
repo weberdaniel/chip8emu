@@ -8,7 +8,9 @@
 #ifndef CHIP8_H_
 #define CHIP8_H_
 
-unsigned char chip8_fontset[80] = {
+namespace chip8 {
+
+constexpr unsigned char fontset[80] = {
 0xF0, 0x90, 0x90, 0x90, 0xF0,  // 0
 0x20, 0x60, 0x20, 0x20, 0x70,  // 1
 0xF0, 0x10, 0xF0, 0x80, 0xF0,  // 2
@@ -27,24 +29,47 @@ unsigned char chip8_fontset[80] = {
 0xF0, 0x80, 0xF0, 0x80, 0x80   // F
 };
 
-struct Chip8 {
+struct emulator {
   constexpr void initialize() noexcept {
     for ( auto& x : memory ) x = 0;
     for ( auto& x : V )      x = 0;
     for ( auto& x : stack )  x = 0;
-    for ( auto& x : gfx)      x = 0;
+    for ( auto& x : gfx)     x = 0;
     pc          = 0x200;
     sp          = 0;
     I           = 0;
     delay_timer = 0;
     sound_timer = 0;
     opcode      = 0;
+
+    for( int i = 0; i < 80; i++) {
+      memory[i] = fontset[i];
+    }
   };
 
   constexpr void emulateCycle(bool test = false) noexcept {
     opcode = memory[pc];
     opcode = opcode << 8;
     opcode = opcode | memory[pc+1];
+    
+    // DXYN: Draw starting at mem location I, at (Vx, Vy) on
+    // screen. Sprites are XORed, if collision with pixel, set 
+    // VF=1 
+
+    /*if ((opcode & 0xF000) == 0xD000) {
+      V[0xF] = 0;
+      for(int i = 0; i < ((opcode & 0x000F)*8); i++ ) {
+         if(gfx[V[(opcode & 0x0F00)]*64+V[(opcode & 0x00F0)]+i] 
+	    xor memory[I+i] != gfx[V[(opcode & 0x0F00)]*64+
+
+	    V[(opcode & 0x00F0)]+i]) {
+           V[0xF] = 1;
+         }
+        gfx[V[(opcode & 0x0F00)]*64+V[(opcode & 0x00F0)]+i] = 
+        gfx[V[(opcode & 0x0F00)]*64+V[(opcode & 0x00F0)]+i] xor memory[I+i];
+
+      }
+    }*/
 
     // FX55: Store V0 to VX in memory, starting at I.
     if ((opcode & 0xF0FF) == 0xF055) {
@@ -252,5 +277,7 @@ struct Chip8 {
   // Chip8 has a grafic screen of black and white pixel
   std::uint8_t gfx[64 * 32];
 };
+
+}
 
 #endif  // CHIP8_H_
