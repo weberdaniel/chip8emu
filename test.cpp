@@ -477,3 +477,25 @@ BOOST_AUTO_TEST_CASE( test_8xy6 )
   BOOST_CHECK( emu.V[0x9] == 0x7F );
   BOOST_CHECK( emu.V[0xF] == 1    );
 }
+
+BOOST_AUTO_TEST_CASE( clear_screen )
+{
+  Chip8 emu;
+  emu.initialize();
+  emu.I = 0x01;
+  emu.delay_timer = 0x11;
+  emu.V[0] = 0x01;
+  emu.V[0xF] = 0x0;
+  emu.V[0x9] = 0xFF;
+  emu.memory[0x200] = 0x00;
+  emu.memory[0x201] = 0xE0;
+
+  for( auto &i : emu.gfx ) {
+    i = 0xFF;
+  }
+  emu.emulateCycle();
+
+  for( auto &a : emu.gfx ) {
+    BOOST_CHECK( a == 0x00 );
+  }
+}

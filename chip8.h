@@ -221,6 +221,13 @@ struct Chip8 {
     if ((opcode & 0xF0FF) == 0xF01E) {
        I += V[(opcode & 0x0F00) >> 8];
     }
+    
+    // 00E0: Clear screen
+    if ((opcode & 0xFFFF) == 0x00E0) {
+       for( auto &i : gfx ) {
+         i = 0;
+       }
+    }
 
     pc += 2;
   };

@@ -10,7 +10,7 @@ CoSMAC VIP and Telmac 1800 8-bit microcomputers in the mid-1970s.
 | Opcode | Done    | Type    | Pseudocode   | Action
 |--------|---------|---------|--------------|-----------------------------------
 | 0NNN   |         | Call    |              |
-| 00E0   |         | Display |              | Clears the screen
+| 00E0   | ok      | Display |              | Clears the screen
 | 00EE   |         | Flow    | return       | Returns from a subroutine
 | 1NNN   | ok      | Flow    | goto NNN     | Jump to Address NNN
 | 2NNN   | ok      | Flow    | \*(0xNNN)()  | Calls subroutine at NNN
