@@ -34,7 +34,11 @@ struct emulator {
     for ( auto& x : memory ) x = 0;
     for ( auto& x : V )      x = 0;
     for ( auto& x : stack )  x = 0;
-    for ( auto& x : gfx)     x = 0;
+    for ( int i = 0; i < 32; i++) {
+      for( int k = 0; k < 64; k++) {
+        gfx[i][k] = 0x00;
+      }
+    }
     pc          = 0x200;
     sp          = 0;
     I           = 0;
@@ -56,20 +60,25 @@ struct emulator {
     // screen. Sprites are XORed, if collision with pixel, set 
     // VF=1 
 
-    /*if ((opcode & 0xF000) == 0xD000) {
+    if ((opcode & 0xF000) == 0xD000) {
       V[0xF] = 0;
-      for(int i = 0; i < ((opcode & 0x000F)*8); i++ ) {
-         if(gfx[V[(opcode & 0x0F00)]*64+V[(opcode & 0x00F0)]+i] 
-	    xor memory[I+i] != gfx[V[(opcode & 0x0F00)]*64+
 
-	    V[(opcode & 0x00F0)]+i]) {
-           V[0xF] = 1;
-         }
-        gfx[V[(opcode & 0x0F00)]*64+V[(opcode & 0x00F0)]+i] = 
-        gfx[V[(opcode & 0x0F00)]*64+V[(opcode & 0x00F0)]+i] xor memory[I+i];
+      for( int i = 0; i < (opcode & 0x000F) ; i++ ) {
+        for( int j = 0; j < 8; j++ ) {
+          int t = gfx[(V[(opcode & 0x0F00) >> 8]+i)%32][(V[(opcode & 0x00F0) >> 4]+j)%64];
 
+          gfx[(V[(opcode & 0x0F00) >> 8]+i)%32]
+             [(V[(opcode & 0x00F0) >> 4]+j)%64] = ((memory[I+i] >> (7-j)) & 1) || 
+	                                     gfx[(V[(opcode & 0x0F00) >> 8]+i)%32]
+						[(V[(opcode & 0x00F0) >> 4]+j)%64];
+
+	  if( t != gfx[(V[(opcode & 0x0F00) >> 8]+i)%32][(V[(opcode & 0x00F0) >> 4]+j)%64]) {
+            V[0xF] = 1;
+          }
+        } 
       }
-    }*/
+
+    }
 
     // FX55: Store V0 to VX in memory, starting at I.
     if ((opcode & 0xF0FF) == 0xF055) {
@@ -249,8 +258,10 @@ struct emulator {
     
     // 00E0: Clear screen
     if ((opcode & 0xFFFF) == 0x00E0) {
-       for( auto &i : gfx ) {
-         i = 0;
+       for( int i = 0; i < 32; i++) {
+         for( int j = 0; j < 64; j++) {
+           gfx[i][j] = 0x00;
+         }
        }
     }
 
@@ -275,7 +286,7 @@ struct emulator {
   std::uint8_t delay_timer;
   std::uint8_t sound_timer;
   // Chip8 has a grafic screen of black and white pixel
-  std::uint8_t gfx[64 * 32];
+  std::uint8_t gfx[32][64];
 };
 
 }

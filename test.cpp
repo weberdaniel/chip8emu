@@ -35,8 +35,8 @@ BOOST_AUTO_TEST_CASE( test_init )
   for( auto& x : emu.stack )
     BOOST_CHECK( x == 0);
 
-  for( auto& x : emu.gfx)
-    BOOST_CHECK( x == 0);
+  //for( auto& x : emu.gfx)
+    //BOOST_CHECK( x == 0);
 
   BOOST_CHECK( emu.pc == 0x200 );
   BOOST_CHECK( emu.sp == 0);
@@ -493,12 +493,149 @@ BOOST_AUTO_TEST_CASE( clear_screen )
   emu.memory[0x200] = 0x00;
   emu.memory[0x201] = 0xE0;
 
-  for( auto &i : emu.gfx ) {
-    i = 0xFF;
+  for( int i = 0; i < 32; i++  ) {
+    for( int j = 0; j < 64; j++ ) {
+      emu.gfx[i][j] = 0xFF;
+    }
   }
   emu.emulateCycle();
 
-  for( auto &a : emu.gfx ) {
-    BOOST_CHECK( a == 0x00 );
+  for( int i = 0; i < 32; i++ ) {
+    for( int j = 0; j < 64; j++ ) {
+      BOOST_CHECK( emu.gfx[i][j] == 0x00 );
+    }
   }
+}
+
+BOOST_AUTO_TEST_CASE( draw_zero_test)
+{
+  chip8::emulator emu;
+  emu.initialize();
+  emu.I = 0x0;
+  emu.delay_timer = 0x11;
+  emu.V[0x1] = 0x0;
+  emu.V[0xF] = 0x0;
+  emu.memory[0x200] = 0xD1;
+  emu.memory[0x201] = 0x15;
+
+  emu.emulateCycle();
+
+  BOOST_CHECK( emu.gfx[0][0] == 1) ;
+  BOOST_CHECK( emu.gfx[1][0] == 1);
+  BOOST_CHECK( emu.gfx[2][0] == 1);
+  BOOST_CHECK( emu.gfx[3][0] == 1);
+  BOOST_CHECK( emu.gfx[4][0] == 1);
+  BOOST_CHECK( emu.gfx[5][0] == 0);
+
+  BOOST_CHECK( emu.gfx[0][1] == 1) ;
+  BOOST_CHECK( emu.gfx[1][1] == 0);
+  BOOST_CHECK( emu.gfx[2][1] == 0);
+  BOOST_CHECK( emu.gfx[3][1] == 0);
+  BOOST_CHECK( emu.gfx[4][1] == 1);
+  BOOST_CHECK( emu.gfx[5][1] == 0);
+
+  BOOST_CHECK( emu.gfx[0][2] == 1) ;
+  BOOST_CHECK( emu.gfx[1][2] == 0);
+  BOOST_CHECK( emu.gfx[2][2] == 0);
+  BOOST_CHECK( emu.gfx[3][2] == 0);
+  BOOST_CHECK( emu.gfx[4][2] == 1);
+  BOOST_CHECK( emu.gfx[5][2] == 0);
+
+  BOOST_CHECK( emu.gfx[0][3] == 1) ;
+  BOOST_CHECK( emu.gfx[1][3] == 1);
+  BOOST_CHECK( emu.gfx[2][3] == 1);
+  BOOST_CHECK( emu.gfx[3][3] == 1);
+  BOOST_CHECK( emu.gfx[4][3] == 1);
+  BOOST_CHECK( emu.gfx[5][3] == 0);
+
+  BOOST_CHECK( emu.V[0xF] == 1);
+}
+
+BOOST_AUTO_TEST_CASE( draw_wrap)
+{
+  chip8::emulator emu;
+  emu.initialize();
+  emu.I = 0x0;
+  emu.delay_timer = 0x11;
+  emu.V[0x1] = 0x1;
+  emu.V[0x2] = 62;
+  emu.V[0xF] = 0x0;
+  emu.memory[0x200] = 0xD1;
+  emu.memory[0x201] = 0x25;
+
+  emu.emulateCycle();
+
+  BOOST_CHECK( emu.gfx[1][62] == 1) ;
+  BOOST_CHECK( emu.gfx[2][62] == 1);
+  BOOST_CHECK( emu.gfx[3][62] == 1);
+  BOOST_CHECK( emu.gfx[4][62] == 1);
+  BOOST_CHECK( emu.gfx[5][62] == 1);
+  BOOST_CHECK( emu.gfx[6][62] == 0);
+
+  BOOST_CHECK( emu.gfx[1][63] == 1) ;
+  BOOST_CHECK( emu.gfx[2][63] == 0);
+  BOOST_CHECK( emu.gfx[3][63] == 0);
+  BOOST_CHECK( emu.gfx[4][63] == 0);
+  BOOST_CHECK( emu.gfx[5][63] == 1);
+  BOOST_CHECK( emu.gfx[6][63] == 0);
+
+  BOOST_CHECK( emu.gfx[1][0] == 1) ;
+  BOOST_CHECK( emu.gfx[2][0] == 0);
+  BOOST_CHECK( emu.gfx[3][0] == 0);
+  BOOST_CHECK( emu.gfx[4][0] == 0);
+  BOOST_CHECK( emu.gfx[5][0] == 1);
+  BOOST_CHECK( emu.gfx[6][0] == 0);
+
+  BOOST_CHECK( emu.gfx[1][1] == 1) ;
+  BOOST_CHECK( emu.gfx[2][1] == 1);
+  BOOST_CHECK( emu.gfx[3][1] == 1);
+  BOOST_CHECK( emu.gfx[4][1] == 1);
+  BOOST_CHECK( emu.gfx[5][1] == 1);
+  BOOST_CHECK( emu.gfx[6][1] == 0);
+
+  BOOST_CHECK( emu.V[0xF] == 1);
+}
+
+BOOST_AUTO_TEST_CASE( draw_one_test)
+{
+  chip8::emulator emu;
+  emu.initialize();
+  emu.I = 0x5;
+  emu.delay_timer = 0x11;
+  emu.V[0x1] = 0x0;
+  emu.V[0xF] = 0x0;
+  emu.memory[0x200] = 0xD1;
+  emu.memory[0x201] = 0x15;
+
+  emu.emulateCycle();
+
+  BOOST_CHECK( emu.gfx[0][0] == 0) ;
+  BOOST_CHECK( emu.gfx[1][0] == 0);
+  BOOST_CHECK( emu.gfx[2][0] == 0);
+  BOOST_CHECK( emu.gfx[3][0] == 0);
+  BOOST_CHECK( emu.gfx[4][0] == 0);
+  BOOST_CHECK( emu.gfx[5][0] == 0);
+
+  BOOST_CHECK( emu.gfx[0][1] == 0) ;
+  BOOST_CHECK( emu.gfx[1][1] == 1);
+  BOOST_CHECK( emu.gfx[2][1] == 0);
+  BOOST_CHECK( emu.gfx[3][1] == 0);
+  BOOST_CHECK( emu.gfx[4][1] == 1);
+  BOOST_CHECK( emu.gfx[5][1] == 0);
+
+  BOOST_CHECK( emu.gfx[0][2] == 1) ;
+  BOOST_CHECK( emu.gfx[1][2] == 1);
+  BOOST_CHECK( emu.gfx[2][2] == 1);
+  BOOST_CHECK( emu.gfx[3][2] == 1);
+  BOOST_CHECK( emu.gfx[4][2] == 1);
+  BOOST_CHECK( emu.gfx[5][2] == 0);
+
+  BOOST_CHECK( emu.gfx[0][3] == 0) ;
+  BOOST_CHECK( emu.gfx[1][3] == 0);
+  BOOST_CHECK( emu.gfx[2][3] == 0);
+  BOOST_CHECK( emu.gfx[3][3] == 0);
+  BOOST_CHECK( emu.gfx[4][3] == 1);
+  BOOST_CHECK( emu.gfx[5][3] == 0);
+
+  BOOST_CHECK( emu.V[0xF] == 1);
 }
