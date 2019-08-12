@@ -20,7 +20,7 @@ CoSMAC VIP and Telmac 1800 8-bit microcomputers in the mid-1970s.
 | 6XNN   | ok      | Const   | Vx = NN      | Sets Vx to NN
 | 7XNN   | ok      | Const   | Vx += NN     | Adds NN to VX. (Carry flag not changed)
 | 8XY0   | ok      | Assign  | Vx=Vy        | Sets VX to the value of VY
-| 8XY1   | ok      | BitOp   | Vx=Vx\|Vy     | Sets VX to VX or VY
+| 8XY1   | ok      | BitOp   | Vx=Vx\|Vy    | Sets VX to VX or VY
 | 8XY2   | ok      | BitOp   | Vx=Vx&Vy     | Sets VX to VX and VY
 | 8XY3   | ok      | BitOp   | Vx=Vx^Vy     | Sets VX to VX xor VY
 | 8XY4   | ok      | Math    | Vx += Vy     | Adds VY to Vx. VF is set to 1 if there is a carry, else to 0.
@@ -40,7 +40,7 @@ CoSMAC VIP and Telmac 1800 8-bit microcomputers in the mid-1970s.
 | FX15   | ok      | Timer   | delaytimer(Vx)| Set delay timer to Vx
 | FX18   | ok      | Sound   | soundtime(Vx)| Set sound timer to Vx
 | FX1E   | ok      | MEM     | I += Vx      | Adds VX to I.
-| FX29   |         | MEM     | I = spriteaddr[Vx] | Set I to location of srite for character in Vx, Chars 0-F are represented by a 4x5 font
+| FX29   | tbt     | MEM     | I = spriteaddr[Vx] | Set I to location of srite for character in Vx, Chars 0-F are represented by a 4x5 font
 | FX33   |         | BCD     |              | Store binary-coded decimal rep of Vx at position I
 | FX55   | tbt        | MEM     | regdump      | Store V0 to VX starting at I. offset from i is increased by 1 for each value
 | FX65   | tbt        | MEM     | regload      | Fill V0 to Fx with values from memory starting at I. increase offset from I but do not touch I

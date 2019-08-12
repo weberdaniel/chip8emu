@@ -131,6 +131,11 @@ struct emulator {
 
       V[(opcode & 0x0F00) >> 8] = (t & (opcode & 0x00FF));
     }
+    
+    // FX29: I = spriteaddr[Vx]
+    if ((opcode & 0xF0FF) == 0xF029) {
+       I = 5 * V[(opcode & 0x0F00) >> 8];
+    }
 
     // FX07: Vx = getdelay()
     if ((opcode & 0xF0FF) == 0xF007) {
