@@ -1,10 +1,18 @@
 #include "chip8.h"
 #include <iostream>
+#include <ncurses.h>
 
 int main() 
 {
   chip8::emulator emu;
   emu.initialize();
 
-  std::cout << "hello world";
+  initscr();
+
+  refresh();
+
+  getch();
+
+  endwin();
+
 }

@@ -6,12 +6,16 @@ set(XMAKE_CXX_STANDARD 14)
 set(SOURCE_FILES chip8.cpp main.cpp chip8.h)
 set(TEST_FILES chip8.cpp test.cpp chip8.h)
 
-find_package( Boost 1.70 REQUIRED )
+find_package(Boost 1.70 REQUIRED )
+find_package(Curses REQUIRED)
 
-include_directories( ${Boost_INCLUDE_DIR} )
+include_directories( ${Boost_INCLUDE_DIR} ${CURSES_INCLUDE_DIR})
+
+add_executable(main main.cpp)
+target_link_libraries( main LINK_PUBLIC ${Boost_LIBRARIES} ${CURSES_LIBRARIES})
 
 add_executable(chip8emu ${SOURCE_FILES})
-target_link_libraries( chip8emu LINK_PUBLIC ${Boost_LIBRARIES} )
+target_link_libraries( chip8emu LINK_PUBLIC ${Boost_LIBRARIES} ${CURSES_LIBRARIES})
 
 add_executable(testchip8emu ${TEST_FILES})
-target_link_libraries( testchip8emu LINK_PUBLIC ${Boost_LIBRARIES} )
+target_link_libraries( testchip8emu LINK_PUBLIC ${Boost_LIBRARIES} ${CURSES_LIBRARIES})
