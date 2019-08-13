@@ -1,5 +1,6 @@
 #include <cstdint>
 #include <random>
+#include <memory>
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -10,6 +11,15 @@
 #define CHIP8_H_
 
 namespace chip8 {
+
+class KeyInterface {
+public:
+  KeyInterface() = default;
+  KeyInterface(KeyInterface const&) = delete;
+  KeyInterface& operator=(KeyInterface const&) = delete;
+
+  virtual std::uint8_t getKey() noexcept = 0; 
+};
 
 constexpr unsigned char fontset[80] = {
 0xF0, 0x90, 0x90, 0x90, 0xF0,  // 0
@@ -31,6 +41,11 @@ constexpr unsigned char fontset[80] = {
 };
 
 struct emulator {
+
+  void set_keyinterface(std::unique_ptr<KeyInterface> arg) {
+    keyinterface = std::move(arg);
+  };
+
   constexpr void initialize() noexcept {
     for (auto& x : memory) x = 0;
     for (auto& x : V)      x = 0;
@@ -220,6 +235,13 @@ struct emulator {
       }
       V[(opcode & 0x0F00) >> 8] += V[(opcode & 0x00F0) >> 4 ];
     }
+    
+    // FX0A: A key press is awaited, then stored in VX (Blocking)
+    if ((opcode & 0xF0FF) == 0xF00A) {
+      if( keyinterface.get() ) {
+        V[(opcode & 0x0F00)] = keyinterface.get()->getKey();
+      }
+    }
 
     // 8XY5: Vx += Vy
     if ((opcode & 0xF00F) == 0x8005) {
@@ -295,6 +317,7 @@ struct emulator {
   std::uint8_t sound_timer;
   // Chip8 has a grafic screen of black and white pixel
   std::uint8_t gfx[32][64];
+  std::unique_ptr<KeyInterface> keyinterface;
 };
 
 }  // namespace chip8
