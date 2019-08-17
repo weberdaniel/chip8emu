@@ -6,7 +6,8 @@
 class curses_key_interface : public chip8::KeyInterface {
 public:
   curses_key_interface() { };
-  std::uint8_t getKey() noexcept {
+  std::uint8_t getKey(int to) noexcept {
+    timeout(to);
     return getch();
   }
 };

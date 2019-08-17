@@ -18,7 +18,7 @@ public:
   KeyInterface(KeyInterface const&) = delete;
   KeyInterface& operator=(KeyInterface const&) = delete;
 
-  virtual std::uint8_t getKey() noexcept = 0; 
+  virtual std::uint8_t getKey(int to) noexcept = 0; 
 };
 
 constexpr unsigned char fontset[80] = {
@@ -94,6 +94,20 @@ struct emulator {
             V[0xF] = 1;
           }
         }
+      }
+    }
+    
+    // EX9E: Skips next instruction if key stored in VX is pressed
+    if ((opcode & 0xF0FF) == 0xE09E) {
+      if( V[(opcode & 0x0F00)] == keyinterface.get()->getKey(0) ) {
+        pc += 2;
+      }
+    }
+    
+    // EXA1: Skips next instruction if key stored in VX is pressed
+    if ((opcode & 0xF0FF) == 0xE0A1) {
+      if( V[(opcode & 0x0F00)] != keyinterface.get()->getKey(0) ) {
+        pc += 2;
       }
     }
 
@@ -239,7 +253,7 @@ struct emulator {
     // FX0A: A key press is awaited, then stored in VX (Blocking)
     if ((opcode & 0xF0FF) == 0xF00A) {
       if( keyinterface.get() ) {
-        V[(opcode & 0x0F00)] = keyinterface.get()->getKey();
+        V[(opcode & 0x0F00)] = keyinterface.get()->getKey(-1);
       }
     }
 

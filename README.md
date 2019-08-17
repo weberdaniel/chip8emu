@@ -33,10 +33,10 @@ CoSMAC VIP and Telmac 1800 8-bit microcomputers in the mid-1970s.
 | BNNN   | ok      | Flow    | PC=V0+NNN    | Jump to address NNN plus V0
 | CXNN   | ok      | Rand    | Vx=rand()&NN | Sets Vx to the result of a bitwise and op. on a random number and NN
 | DXYN   | ok      | Disp    | draw(Vx,Vy,N)| Dra sprite a coord (Vx,Vy) with width of 8 pix and hight of N pix. 
-| EX9E   |         | KeyOp   | if(key()==Vx)| Skips next instruction if key stored in VX is pressed
-| EXA1   |         | KeyOp   | if(key()!=Vx)| Skips the next instruction if the key sotred in Vx isn't pressed
+| EX9E   | tbt     | KeyOp   | if(key()==Vx)| Skips next instruction if key stored in VX is pressed
+| EXA1   | tbt     | KeyOp   | if(key()!=Vx)| Skips the next instruction if the key sotred in Vx isn't pressed
 | FX07   | ok      | Timer   | Vx=getdelay()| Set Vx to the value of the delay timer
-| FX0A   |         | KeyOp   | Vx=getkey()  | A key press is awaited, then stored in VX. (Blocking)
+| FX0A   | tbt     | KeyOp   | Vx=getkey()  | A key press is awaited, then stored in VX. (Blocking)
 | FX15   | ok      | Timer   | delaytimer(Vx)| Set delay timer to Vx
 | FX18   | ok      | Sound   | soundtime(Vx)| Set sound timer to Vx
 | FX1E   | ok      | MEM     | I += Vx      | Adds VX to I.
