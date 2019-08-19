@@ -181,10 +181,19 @@ struct emulator {
     //       increments stack pointer then puts
     //       current pc on the top of the stack.
     //       the pc is then set to nnn.
-    if ((opcode & 0xF000) == 0x200) {
+    if ((opcode & 0xF000) == 0x2000) {
       sp++;
       stack[sp] = pc;
       pc = (opcode & 0x0FFF);
+    }
+    
+    // 00EE: The interpreter sets the program
+    //       counter to the address at the top
+    //       of the stack, then substracts 1 
+    //       from the stack pointer
+    if ((opcode & 0xFFFF) == 0x00EE) {
+      pc = stack[sp];
+      sp--;
     }
 
     // 3XNN: Skip next instruction if V[X] == NN
