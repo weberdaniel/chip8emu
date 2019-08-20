@@ -592,3 +592,47 @@ BOOST_AUTO_TEST_CASE(draw_one_test) {
 
   BOOST_CHECK(emu.V[0xF] == 1);
 }
+
+BOOST_AUTO_TEST_CASE(fx29_test) {
+  chip8::emulator emu;
+  emu.initialize();
+  emu.I = 0x5;
+  emu.delay_timer = 0x11;
+  emu.V[0x1] = 0x0;
+  emu.V[0x2] = 0xA;
+  emu.V[0xF] = 0xA;
+  emu.memory[0x200] = 0xF2;
+  emu.memory[0x201] = 0x29;
+  emu.emulateCycle();
+  BOOST_CHECK(emu.I == (0xA*5));
+
+  emu.memory[0x202] = 0xD1;
+  emu.memory[0x203] = 0x15;
+  emu.emulateCycle();
+
+  BOOST_CHECK(emu.gfx[0][0] == 1);
+  BOOST_CHECK(emu.gfx[1][0] == 1);
+  BOOST_CHECK(emu.gfx[2][0] == 1);
+  BOOST_CHECK(emu.gfx[3][0] == 1);
+  BOOST_CHECK(emu.gfx[4][0] == 1);
+
+  BOOST_CHECK(emu.gfx[0][1] == 1);
+  BOOST_CHECK(emu.gfx[1][1] == 0);
+  BOOST_CHECK(emu.gfx[2][1] == 1);
+  BOOST_CHECK(emu.gfx[3][1] == 0);
+  BOOST_CHECK(emu.gfx[4][1] == 0);
+
+  BOOST_CHECK(emu.gfx[0][2] == 1);
+  BOOST_CHECK(emu.gfx[1][2] == 0);
+  BOOST_CHECK(emu.gfx[2][2] == 1);
+  BOOST_CHECK(emu.gfx[3][2] == 0);
+  BOOST_CHECK(emu.gfx[4][2] == 0);
+
+  BOOST_CHECK(emu.gfx[0][3] == 1);
+  BOOST_CHECK(emu.gfx[1][3] == 1);
+  BOOST_CHECK(emu.gfx[2][3] == 1);
+  BOOST_CHECK(emu.gfx[3][3] == 1);
+  BOOST_CHECK(emu.gfx[4][3] == 1);
+
+  BOOST_CHECK(emu.V[0xF] == 1);
+}
