@@ -262,7 +262,7 @@ struct emulator {
     // FX0A: A key press is awaited, then stored in VX (Blocking)
     if ((opcode & 0xF0FF) == 0xF00A) {
       if( keyinterface.get() ) {
-        V[(opcode & 0x0F00)] = keyinterface.get()->getKey(-1);
+        V[(opcode & 0x0F00) >> 8] = keyinterface.get()->getKey(-1);
       }
     }
 

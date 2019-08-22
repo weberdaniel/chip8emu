@@ -636,3 +636,26 @@ BOOST_AUTO_TEST_CASE(fx29_test) {
 
   BOOST_CHECK(emu.V[0xF] == 1);
 }
+
+
+BOOST_AUTO_TEST_CASE(key_test) {
+  class keytest_interface : public chip8::KeyInterface {
+  public:
+    keytest_interface() { };
+    std::uint8_t getKey(int to) noexcept {
+      return 0xC;
+    }
+  };
+  chip8::emulator emu;
+  emu.initialize();
+  emu.I = 0x5;
+  emu.delay_timer = 0x11;
+  emu.V[0x1] = 0x0;
+  emu.memory[0x200] = 0xF1;
+  emu.memory[0x201] = 0x0A;
+  emu.set_keyinterface(std::make_unique<keytest_interface>());
+  emu.emulateCycle();
+
+  BOOST_CHECK(emu.V[0x1] == 0xC);
+
+}
