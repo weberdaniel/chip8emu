@@ -659,3 +659,86 @@ BOOST_AUTO_TEST_CASE(key_test) {
   BOOST_CHECK(emu.V[0x1] == 0xC);
 
 }
+
+BOOST_AUTO_TEST_CASE(keypressedinvx_test) {
+  class keytest_interface : public chip8::KeyInterface {
+  public:
+    keytest_interface() { };
+    std::uint8_t getKey(int to) noexcept {
+      return 0xC;
+    }
+  };
+  chip8::emulator emu;
+  emu.initialize();
+  emu.set_keyinterface(std::make_unique<keytest_interface>());
+  emu.I = 0x5;
+  emu.delay_timer = 0x11;
+  emu.V[0x1] = 0xC;
+  emu.V[0x2] = 0x5;
+  // skip next instruction if key is pressed stored in V[1]
+  emu.memory[0x200] = 0xE1;
+  emu.memory[0x201] = 0x9E;
+  // next instruction: add V[2] to V[1]
+  emu.memory[0x202] = 0x81;
+  emu.memory[0x203] = 0x24;
+  emu.emulateCycle();
+  emu.emulateCycle();
+  // v1 should still be the same value 
+  BOOST_CHECK(emu.V[0x1] == 0xC);
+}
+
+BOOST_AUTO_TEST_CASE(keypressedinvx_2_test) {
+  class keytest_interface : public chip8::KeyInterface {
+  public:
+    keytest_interface() { };
+    std::uint8_t getKey(int to) noexcept {
+      return 0x0;
+    }
+  };
+  chip8::emulator emu;
+  emu.initialize();
+  emu.set_keyinterface(std::make_unique<keytest_interface>());
+  emu.I = 0x5;
+  emu.delay_timer = 0x11;
+  emu.V[0x1] = 0xC;
+  emu.V[0x2] = 0x5;
+  // skip next instruction if key is pressed stored in V[1]
+  emu.memory[0x200] = 0xE1;
+  emu.memory[0x201] = 0x9E;
+  // next instruction: add V[2] to V[1]
+  emu.memory[0x202] = 0x81;
+  emu.memory[0x203] = 0x24;
+  emu.emulateCycle();
+  emu.emulateCycle();
+  // v1 should still be the same value 
+  BOOST_CHECK(emu.V[0x1] == 0xC+0x5);
+  BOOST_CHECK(emu.V[0xF] == 0);
+}
+
+BOOST_AUTO_TEST_CASE(exa1_test) {
+  class keytest_interface : public chip8::KeyInterface {
+  public:
+    keytest_interface() { };
+    std::uint8_t getKey(int to) noexcept {
+      return 0x0;
+    }
+  };
+  chip8::emulator emu;
+  emu.initialize();
+  emu.set_keyinterface(std::make_unique<keytest_interface>());
+  emu.I = 0x5;
+  emu.delay_timer = 0x11;
+  emu.V[0x1] = 0xC;
+  emu.V[0x2] = 0x5;
+  // skip next instruction if key is pressed stored in V[1]
+  emu.memory[0x200] = 0xE1;
+  emu.memory[0x201] = 0xA1;
+  // next instruction: add V[2] to V[1]
+  emu.memory[0x202] = 0x81;
+  emu.memory[0x203] = 0x24;
+  emu.emulateCycle();
+  emu.emulateCycle();
+  // v1 should still be the same value 
+  BOOST_CHECK(emu.V[0x1] == 0xC);
+  BOOST_CHECK(emu.V[0xF] == 0);
+}
