@@ -742,3 +742,59 @@ BOOST_AUTO_TEST_CASE(exa1_test) {
   BOOST_CHECK(emu.V[0x1] == 0xC);
   BOOST_CHECK(emu.V[0xF] == 0);
 }
+
+BOOST_AUTO_TEST_CASE(test_return_from_subroutine) {
+  class keytest_interface : public chip8::KeyInterface {
+  public:
+    keytest_interface() { };
+    std::uint8_t getKey(int to) noexcept {
+      return 0x0;
+    }
+  };
+  chip8::emulator emu;
+  emu.initialize();
+  emu.set_keyinterface(std::make_unique<keytest_interface>());
+  emu.I = 0x5;
+  emu.delay_timer = 0x11;
+  emu.V[0x1] = 0xC;
+  emu.V[0x2] = 0x5;
+  emu.V[0x9] = 0x0;
+  emu.V[0xA] = 0x0;
+
+  // store a subroutine in memory at loc 0x300-0x303
+  // sets V9 to 0x12 and returns from subroutine
+  emu.memory[0x300] = 0x69;
+  emu.memory[0x301] = 0x12;
+  emu.memory[0x302] = 0x00;
+  emu.memory[0x303] = 0xEE;
+
+  // Call subroutine at 0x300
+  emu.memory[0x200] = 0x23;
+  emu.memory[0x201] = 0x00;
+  
+  // set VA to 0x45
+  emu.memory[0x202] = 0x6A;
+  emu.memory[0x203] = 0x45;
+
+  //call subroutine
+  emu.emulateCycle();
+
+  BOOST_CHECK(emu.sp == 0x1);
+  BOOST_CHECK(emu.pc == 0x300);
+
+  // assign
+  emu.emulateCycle();
+  BOOST_CHECK(emu.V[0x9] == 0x12);
+
+  //return from subroutine 
+  emu.emulateCycle();
+  
+  BOOST_CHECK(emu.sp == 0x0);
+  BOOST_CHECK(emu.pc == 0x202);
+
+  // assign
+  emu.emulateCycle();
+
+  BOOST_CHECK(emu.V[0x9] == 0x12);
+  BOOST_CHECK(emu.V[0xA] == 0x45);
+}

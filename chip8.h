@@ -185,6 +185,7 @@ struct emulator {
       sp++;
       stack[sp] = pc;
       pc = (opcode & 0x0FFF);
+      pc -= 2;
     }
     
     // 00EE: The interpreter sets the program
