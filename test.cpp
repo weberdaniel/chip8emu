@@ -798,3 +798,35 @@ BOOST_AUTO_TEST_CASE(test_return_from_subroutine) {
   BOOST_CHECK(emu.V[0x9] == 0x12);
   BOOST_CHECK(emu.V[0xA] == 0x45);
 }
+
+BOOST_AUTO_TEST_CASE(test_store_bcd) {
+  class keytest_interface : public chip8::KeyInterface {
+  public:
+    keytest_interface() { };
+    std::uint8_t getKey(int to) noexcept {
+      return 0x0;
+    }
+  };
+
+  chip8::emulator emu;
+  emu.initialize();
+  emu.set_keyinterface(std::make_unique<keytest_interface>());
+  emu.I = 0x5;
+  emu.delay_timer = 0x11;
+  emu.V[0x4] = 123;
+  emu.V[0x5] = 0x0;
+  emu.V[0x6] = 0x0;
+  emu.V[0x7] = 0x0;
+
+  // Call subroutine at 0x300
+  emu.memory[0x200] = 0xF4;
+  emu.memory[0x201] = 0x33;
+
+  //call subroutine
+  emu.emulateCycle();
+
+  BOOST_CHECK(emu.V[0x4] == 123);
+  BOOST_CHECK(emu.V[0x5] == 1);
+  BOOST_CHECK(emu.V[0x6] == 2);
+  BOOST_CHECK(emu.V[0x7] == 3);
+}

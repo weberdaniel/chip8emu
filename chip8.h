@@ -313,9 +313,9 @@ struct emulator {
 
     // FX33: Store BCD representation of Vx in memory loc I,I+1,I+2
     if ((opcode & 0xF0FF) == 0xF033) {
-      V[I] = V[ (opcode & 0x0F00) >> 8 ] / 100; 
-      V[I+1] = V[ (opcode & 0x0F00) >> 8 ] / 10;
-      V[I+2] =  V[ (opcode & 0x0F00) >> 8 ] - V[I] * 100 + V[I+1]*10;
+      V[I]   = V[(opcode & 0x0F00) >> 8] / 100; 
+      V[I+1] = (V[(opcode & 0x0F00) >> 8] - V[I]*100)/10;
+      V[I+2] = V[(opcode & 0x0F00) >> 8] - V[I]*100 - V[I+1]*10;
     }
 
     // 00E0: Clear screen
