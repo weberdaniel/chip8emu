@@ -67,10 +67,12 @@ struct emulator {
     }
   };
 
-  constexpr void emulateCycle(bool test = false) noexcept {
+  void emulateCycle(bool test = false) noexcept {
     opcode = memory[pc];
     opcode = opcode << 8;
     opcode = opcode | memory[pc+1];
+
+    //std::cout << opcode << std::endl;
 
     // DXYN: Draw starting at mem location I, at (Vx, Vy) on
     // screen. Sprites are XORed, if collision with pixel, set
@@ -80,17 +82,17 @@ struct emulator {
       V[0xF] = 0;
       for (int i = 0; i < (opcode & 0x000F); i++) {
         for (int j = 0; j < 8; j++) {
-          int t = gfx[(V[(opcode & 0x0F00) >> 8]+i)%32]
-                     [(V[(opcode & 0x00F0) >> 4]+j)%64];
+          int t = gfx[(V[(opcode & 0x00F0) >> 4]+i)%32]
+                     [(V[(opcode & 0x0F00) >> 8]+j)%64];
 
-          gfx[(V[(opcode & 0x0F00) >> 8]+i)%32]
-             [(V[(opcode & 0x00F0) >> 4]+j)%64]
+          gfx[(V[(opcode & 0x00F0) >> 4]+i)%32]
+             [(V[(opcode & 0x0F00) >> 8]+j)%64]
           = ((memory[I+i] >> (7-j)) & 1)
-            || gfx[(V[(opcode & 0x0F00) >> 8]+i)%32]
-                  [(V[(opcode & 0x00F0) >> 4]+j)%64];
+            || gfx[(V[(opcode & 0x00F0) >> 4]+i)%32]
+                  [(V[(opcode & 0x0F00) >> 8]+j)%64];
 
-          if ( t != gfx[(V[(opcode & 0x0F00) >> 8]+i)%32]
-                       [(V[(opcode & 0x00F0) >> 4]+j)%64]) {
+          if ( t != gfx[(V[(opcode & 0x00F0) >> 4]+i)%32]
+                       [(V[(opcode & 0x0F00) >> 8]+j)%64]) {
             V[0xF] = 1;
           }
         }

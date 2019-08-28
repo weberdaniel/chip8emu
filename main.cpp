@@ -2,6 +2,9 @@
 #include <iostream>
 #include <memory>
 #include <ncurses.h>
+#include <iostream>
+#include <fstream>
+#include <bitset>
 
 class curses_key_interface : public chip8::KeyInterface {
 public:
@@ -17,10 +20,20 @@ int main() {
   emu.set_keyinterface(std::make_unique<curses_key_interface>());
   emu.initialize();
 
+  std::ifstream input( "../roms/rom", std::ios::binary );
+  std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
+  std::ofstream output( "output", std::ios::binary );
+  
+  for( int i = 0; i < buffer.size(); ++i ) {
+    emu.memory[i+0x200] = buffer.at(i);
+    output << buffer.at(i);
+  }
+  output.close();
+
   int height {32};
   int width {64};
   int start_y {0};
-  int start_x {1};
+  int start_x {0};
 
   initscr();
 
@@ -32,16 +45,21 @@ int main() {
 
   refresh();
 
-  emu.memory[0x200] = 0xF1;
-  emu.memory[0x201] = 0x0A;
+  while(1) {
+    emu.emulateCycle();
+    for( int k = 0; k < 32; k++) {
+      for( int m = 0; m < 64; m++ ) {
+          if( emu.gfx[k][m] )
+            mvwprintw(win, k, m, "%c", 'x');
+      }
+    }
+    wrefresh(win);
+    refresh();
+    getch();
+  }
 
-  emu.emulateCycle();
   int a = 0;
 
-  wprintw(win, "%i", emu.V[0x1]);
-  refresh();
-
-  getch();
 
   endwin();
 
