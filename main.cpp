@@ -11,7 +11,25 @@ public:
   curses_key_interface() { };
   std::uint8_t getKey(int to) noexcept {
     timeout(to);
-    return getch();
+
+    switch(getch()){
+	  case '1': return 1;
+	  case '2': return 2;
+	  case '3': return 3;
+	  case '4': return 4;
+	  case '5': return 5;
+	  case '6': return 6;
+	  case '7': return 7;
+	  case '8': return 8;
+	  case '9': return 9;
+	  case '0': return 0;
+	  case 'A': return 0xA;
+	  case 'B': return 0xB;
+	  case 'C': return 0xC;
+	  case 'D': return 0xD;
+	  case 'E': return 0xE;
+	  case 'F': return 0xF;
+  }
   }
 };
 
@@ -42,7 +60,6 @@ int main() {
   WINDOW* memory_window  = newwin(height/2+2, width*2, height, 0 );
   refresh();
 
-  box(main_window,    0, 0);
   box(program_window, 0, 0);
   box(memory_window,  0, 0);
   wrefresh(main_window);
@@ -54,6 +71,8 @@ int main() {
       for( int m = 0; m < 64; m++ ) {
           if( emu.gfx[k][m] )
             mvwprintw(main_window, k, m, "%c", 'x');
+	  else
+            mvwprintw(main_window, k, m, "%c", ' ');
       }
 
       for( int l = 0; l < 16; l++ ) {
@@ -81,6 +100,7 @@ int main() {
     wrefresh(program_window);
     wrefresh(memory_window);
     refresh();
+    timeout(-1);
     getch();
   }
 

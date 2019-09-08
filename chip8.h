@@ -94,19 +94,20 @@ struct emulator {
       V[0xF] = 0;
       for (int i = 0; i < (opcode & 0x000F); i++) {
         for (int j = 0; j < 8; j++) {
+          if( ((memory[I+i] >> (7-j)) & 1) == 1 ) {
           int t = gfx[(V[(opcode & 0x00F0) >> 4]+i)%32]
                      [(V[(opcode & 0x0F00) >> 8]+j)%64];
 
           gfx[(V[(opcode & 0x00F0) >> 4]+i)%32]
              [(V[(opcode & 0x0F00) >> 8]+j)%64]
-          = ((memory[I+i] >> (7-j)) & 1)
-            || gfx[(V[(opcode & 0x00F0) >> 4]+i)%32]
-                  [(V[(opcode & 0x0F00) >> 8]+j)%64];
+          = (((memory[I+i] >> (7-j)) & 1) != t) ? 1 : 0;
 
           if ( t != gfx[(V[(opcode & 0x00F0) >> 4]+i)%32]
-                       [(V[(opcode & 0x0F00) >> 8]+j)%64]) {
+                       [(V[(opcode & 0x0F00) >> 8]+j)%64]
+	       && t==1 ) {
             V[0xF] = 1;
           }
+	  }
         }
       }
     }
@@ -253,8 +254,8 @@ struct emulator {
 
     // 8XY2: Vx = Vx & Vy
     if ((opcode & 0xF00F) == 0x8002) {
-      V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8 ] &
-                                  V[(opcode & 0x00F0) >> 4 ];
+      V[(opcode & 0x0F00) >> 8] = (V[(opcode & 0x0F00) >> 8 ] &
+                                  V[(opcode & 0x00F0) >> 4 ]);
     }
 
     // 8XY3: Vx = Vx ^ Vy

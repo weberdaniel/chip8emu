@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE(test_set_delay_timer) {
   emu.memory[0x200] = 0xF8;
   emu.memory[0x201] = 0x15;
   emu.emulateCycle();
-  BOOST_CHECK(emu.delay_timer == 0x55);
+  BOOST_CHECK(emu.delay_timer <= 0x55);
 }
 
 BOOST_AUTO_TEST_CASE(test_set_sound_timer ) {
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(test_set_sound_timer ) {
   emu.memory[0x200] = 0xF9;
   emu.memory[0x201] = 0x18;
   emu.emulateCycle();
-  BOOST_CHECK(emu.sound_timer == 0x53);
+  BOOST_CHECK(emu.sound_timer <= 0x53);
 }
 
 BOOST_AUTO_TEST_CASE(test_add_vx_to_i) {
@@ -503,7 +503,7 @@ BOOST_AUTO_TEST_CASE(draw_zero_test) {
   BOOST_CHECK(emu.gfx[4][3] == 1);
   BOOST_CHECK(emu.gfx[5][3] == 0);
 
-  BOOST_CHECK(emu.V[0xF] == 1);
+  BOOST_CHECK(emu.V[0xF] == 0);
 }
 
 BOOST_AUTO_TEST_CASE(draw_wrap) {
@@ -547,6 +547,58 @@ BOOST_AUTO_TEST_CASE(draw_wrap) {
   BOOST_CHECK(emu.gfx[5][1] == 1);
   BOOST_CHECK(emu.gfx[6][1] == 0);
 
+  BOOST_CHECK(emu.V[0xF] == 0);
+}
+
+BOOST_AUTO_TEST_CASE(delete_pixel_test) {
+  chip8::emulator emu;
+  emu.initialize();
+  emu.I = 0x5;
+  emu.delay_timer = 0x11;
+  emu.V[0x1] = 0x0;
+  emu.V[0xF] = 0x0;
+  emu.memory[0x200] = 0xD1;
+  emu.memory[0x201] = 0x15;
+  emu.gfx[1][1] = 1;
+  emu.gfx[2][2] = 1;
+  emu.gfx[1][3] = 1;
+  emu.gfx[3][3] = 1;
+
+  emu.emulateCycle();
+
+  BOOST_CHECK(emu.gfx[0][0] == 0);
+  BOOST_CHECK(emu.gfx[1][0] == 0);
+  BOOST_CHECK(emu.gfx[2][0] == 0);
+  BOOST_CHECK(emu.gfx[3][0] == 0);
+  BOOST_CHECK(emu.gfx[4][0] == 0);
+  BOOST_CHECK(emu.gfx[5][0] == 0);
+
+  BOOST_CHECK(emu.gfx[0][1] == 0);
+  //this will be deleted due to collision
+  BOOST_CHECK(emu.gfx[1][1] == 0);
+  BOOST_CHECK(emu.gfx[2][1] == 0);
+  BOOST_CHECK(emu.gfx[3][1] == 0);
+  BOOST_CHECK(emu.gfx[4][1] == 1);
+  BOOST_CHECK(emu.gfx[5][1] == 0);
+
+  BOOST_CHECK(emu.gfx[0][2] == 1);
+  BOOST_CHECK(emu.gfx[1][2] == 1);
+  //will also be deleted.
+  BOOST_CHECK(emu.gfx[2][2] == 0);
+  BOOST_CHECK(emu.gfx[3][2] == 1);
+  BOOST_CHECK(emu.gfx[4][2] == 1);
+  BOOST_CHECK(emu.gfx[5][2] == 0);
+
+  BOOST_CHECK(emu.gfx[0][3] == 0);
+  //will not be changed
+  BOOST_CHECK(emu.gfx[1][3] == 1);
+  BOOST_CHECK(emu.gfx[2][3] == 0);
+  //3,3 is set to zero, initially 1, so xor will result in 1
+  BOOST_CHECK(emu.gfx[3][3] == 1);
+  BOOST_CHECK(emu.gfx[4][3] == 1);
+  BOOST_CHECK(emu.gfx[5][3] == 0);
+
+  //collision will be true
   BOOST_CHECK(emu.V[0xF] == 1);
 }
 
@@ -590,7 +642,7 @@ BOOST_AUTO_TEST_CASE(draw_one_test) {
   BOOST_CHECK(emu.gfx[4][3] == 1);
   BOOST_CHECK(emu.gfx[5][3] == 0);
 
-  BOOST_CHECK(emu.V[0xF] == 1);
+  BOOST_CHECK(emu.V[0xF] == 0);
 }
 
 BOOST_AUTO_TEST_CASE(fx29_test) {
@@ -634,7 +686,7 @@ BOOST_AUTO_TEST_CASE(fx29_test) {
   BOOST_CHECK(emu.gfx[3][3] == 1);
   BOOST_CHECK(emu.gfx[4][3] == 1);
 
-  BOOST_CHECK(emu.V[0xF] == 1);
+  BOOST_CHECK(emu.V[0xF] == 0xA);
 }
 
 
