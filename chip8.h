@@ -4,6 +4,9 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <map>
+#include <string>
+#include <chrono>
 
 // Copyright 2019 Daniel Weber
 
@@ -11,6 +14,15 @@
 #define CHIP8_H_
 
 namespace chip8 {
+
+std::map<std::uint16_t,std::string> opcodes{
+  { 0x00EE, "Return from Subroutine" },
+  { 0x1000, "Jump to Adr NNN"},  
+  { 0x2000, "2NNN: Call subr. at NNN" },  
+  { 0x3000, "3XNN: Skip instr. if Vx eq NN" },  
+  { 0x4000, "4XNN: Skip instr. if Vx neq NN" },  
+};
+
 
 class KeyInterface {
 public:
@@ -329,6 +341,28 @@ struct emulator {
        }
     }
     pc += 2;
+    update_timer();
+  };
+
+  void update_timer() {
+    std::chrono::system_clock::time_point now = 
+                                          std::chrono::system_clock::now();
+    if(delay_timer != 0) {
+      std::chrono::milliseconds delay_delta = 
+        std::chrono::duration_cast<std::chrono::milliseconds>(now-last_delay);
+      if( (delay_delta > std::chrono::duration<float, std::milli>(1/60)) ) {
+        last_delay = now;
+        delay_timer--;
+      }
+    }
+    if(sound_timer != 0) {
+      std::chrono::milliseconds sound_delta = 
+        std::chrono::duration_cast<std::chrono::milliseconds>(now-last_sound);
+      if( (sound_delta > std::chrono::duration<float, std::milli>(1/60)) ) {
+        last_sound = now;
+        sound_timer--;
+      }
+    }
   };
 
   // opcode
@@ -351,6 +385,10 @@ struct emulator {
   // Chip8 has a grafic screen of black and white pixel
   std::uint8_t gfx[32][64];
   std::unique_ptr<KeyInterface> keyinterface;
+  // Save timepoint of last decrease of delay timer
+  std::chrono::time_point<std::chrono::system_clock> last_delay;
+  // Save timepoint of last decrease of sound timer
+  std::chrono::time_point<std::chrono::system_clock> last_sound;
 };
 
 }  // namespace chip8

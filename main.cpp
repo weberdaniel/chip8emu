@@ -69,10 +69,10 @@ int main() {
       for( int l = -28; l < 29; l += 2 ) {
         if( l != 0 )
           mvwprintw(program_window, l/2+1+14, 1, "%03d | 0x%02x%02x", l/2, 
-                    emu.memory[emu.pc+l], emu.memory[emu.pc+l]);
+                    emu.memory[emu.pc+l], emu.memory[emu.pc+l+1]);
         else 
           mvwprintw(program_window, l/2+1+14, 1, "%03d | 0x%02x%02x <---", l/2, 
-                    emu.memory[emu.pc+l], emu.memory[emu.pc+l]);
+                    emu.memory[emu.pc+l], emu.memory[emu.pc+l+1]);
       }
 
     }
