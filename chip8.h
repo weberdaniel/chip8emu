@@ -282,13 +282,13 @@ struct emulator {
       }
     }
 
-    // 8XY5: Vx += Vy
+    // 8XY5: Vx -= Vy
     if ((opcode & 0xF00F) == 0x8005) {
       // set borrow (inverse logic to carry!!)
-      if (V[(opcode & 0x00F0) >> 4 ] > (V[(opcode & 0x0F00) >> 8])) {
-        V[16] = 0;
+      if (V[(opcode & 0x0F00) >> 8 ] > (V[(opcode & 0x00F0) >> 4])) {
+        V[0xf] = 1;
       } else {
-        V[16] = 1;
+        V[0xf] = 0;
       }
       V[(opcode & 0x0F00) >> 8] -= V[(opcode & 0x00F0) >> 4 ];
     }

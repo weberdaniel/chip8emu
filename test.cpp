@@ -323,7 +323,7 @@ BOOST_AUTO_TEST_CASE(x_minus_y_test) {
   emu.emulateCycle();
 
   BOOST_CHECK(emu.V[0x9] == 0xDE);
-  BOOST_CHECK(emu.V[16] == 0);
+  BOOST_CHECK(emu.V[0xf] == 0);
 }
 
 BOOST_AUTO_TEST_CASE(VxisVyminusVx) {
@@ -686,7 +686,7 @@ BOOST_AUTO_TEST_CASE(fx29_test) {
   BOOST_CHECK(emu.gfx[3][3] == 1);
   BOOST_CHECK(emu.gfx[4][3] == 1);
 
-  BOOST_CHECK(emu.V[0xF] == 0xA);
+  BOOST_CHECK(emu.V[0xF] == 0x0);
 }
 
 
