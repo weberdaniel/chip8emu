@@ -11,24 +11,23 @@ public:
   curses_key_interface() { };
   std::uint8_t getKey(int to) noexcept {
     timeout(to);
-
     switch(getch()){
-	  case '1': return 1;
-	  case '2': return 2;
-	  case '3': return 3;
-	  case '4': return 4;
-	  case '5': return 5;
-	  case '6': return 6;
-	  case '7': return 7;
-	  case '8': return 8;
-	  case '9': return 9;
-	  case '0': return 0;
-	  case 'A': return 0xA;
-	  case 'B': return 0xB;
-	  case 'C': return 0xC;
-	  case 'D': return 0xD;
-	  case 'E': return 0xE;
-	  case 'F': return 0xF;
+	  case 49: return 1;
+	  case 50: return 2;
+	  case 51: return 3;
+	  case 52: return 4;
+	  case 53: return 5;
+	  case 54: return 6;
+	  case 55: return 7;
+	  case 56: return 8;
+	  case 57: return 9;
+	  case 48: return 0;
+	  case 97: return 0xA;
+	  case 98: return 0xB;
+	  case 99: return 0xC;
+	  case 100: return 0xD;
+	  case 101: return 0xE;
+	  case 102: return 0xF;
   }
   }
 };
@@ -101,7 +100,8 @@ int main() {
     wrefresh(memory_window);
     refresh();
     timeout(-1);
-    getch();
+    int test = getch();
+    mvwprintw(memory_window, 10, 10, "getch = %d", test);
   }
 
   int a = 0;

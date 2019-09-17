@@ -114,14 +114,14 @@ struct emulator {
     
     // EX9E: Skips next instruction if key stored in VX is pressed
     if ((opcode & 0xF0FF) == 0xE09E) {
-      if( V[(opcode & 0x0F00) >> 8] == keyinterface.get()->getKey(0) ) {
+      if( V[(opcode & 0x0F00) >> 8] == keyinterface.get()->getKey(100) ) {
         pc += 2;
       }
     }
     
     // EXA1: Skips next instruction if key stored in VX is pressed
     if ((opcode & 0xF0FF) == 0xE0A1) {
-      if( V[(opcode & 0x0F00) >> 8] != keyinterface.get()->getKey(0) ) {
+      if( V[(opcode & 0x0F00) >> 8] != keyinterface.get()->getKey(100) ) {
         pc += 2;
       }
     }
