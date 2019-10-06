@@ -15,12 +15,67 @@
 
 namespace chip8 {
 
+class OpCode {
+public:
+
+  OpCode() = delete;
+  OpCode(const OpCode&) = delete;
+
+static std::string as_string(std::uint16_t opcode) {
+  if( (opcode & 0xF000) == 0x0000 ) {
+    return "NOOP";
+  }
+  if( (opcode & 0xFFFF) == 0x00E0 ) {
+    return "CLR SCR";
+  }
+  if( (opcode & 0xFFFF) == 0x00EE ) {
+    return "RET";
+  }
+  if( (opcode & 0xF000) == 0x1000 ) {
+    return "0x1NNN: JMP NNN";
+  }
+  if( (opcode & 0xF000) == 0x2000 ) {
+    return "2NNN: CALL NNN";
+  }
+  if( (opcode & 0xF000) == 0x3000 ) {
+    return "3XNN: SKIP IF VX == NN";
+  }
+  if( (opcode & 0xF000) == 0x4000 ) {
+    return "4XNN: SKIP IF VX != NN";
+  }
+  if( (opcode & 0xF00F) == 0x5000 ) {
+    return "5XY0: SKIP IF VX == VY";
+  }
+  if( (opcode & 0xF000) == 0x6000 ) {
+    return "6XNN: SET VX = NN";
+  }
+  if( (opcode & 0xF000) == 0x7000 ) {
+    return "6XNN: ADD VX += NN";
+  }
+  if( (opcode & 0xF00F) == 0x8000 ) {
+    return "8XY0: SET VX = VY";
+  }
+  //TODO: implement all opcodes
+  return "UNKONWN OPCODE";
+}
+
+private:
+
+
 std::map<std::uint16_t,std::string> opcodes{
-  { 0x00EE, "Return from Subroutine" },
+  { 0x0000, "Ignored" },
+  { 0x00E0, "Clear Screen" },
+  { 0x00EE, "Return from Routine" },
   { 0x1000, "Jump to Adr NNN"},  
-  { 0x2000, "2NNN: Call subr. at NNN" },  
-  { 0x3000, "3XNN: Skip instr. if Vx eq NN" },  
-  { 0x4000, "4XNN: Skip instr. if Vx neq NN" },  
+  { 0x2000, "2NNN: Call routine at NNN" },  
+  { 0x3000, "3XNN: Skip next if Vx eq NN" },  
+  { 0x4000, "4XNN: Skip next if Vx neq NN" },  
+  { 0x5000, "5XY0: Skip next if Vx eq Vy" },  
+  { 0x6000, "6XNN: Set Vx to NN" },  
+  { 0x7000, "7XNN: Add NN to Vx" },  
+  { 0x8000, "8XY1: Add NN to Vx" },  
+};
+
 };
 
 

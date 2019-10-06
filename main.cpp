@@ -53,6 +53,7 @@ int main() {
   int start_x {0};
 
   initscr();
+  noecho();
 
   WINDOW* main_window    = newwin(height, width, start_y, start_x);
   WINDOW* program_window = newwin(height, width, 0, width);
@@ -73,6 +74,8 @@ int main() {
 	  else
             mvwprintw(main_window, k, m, "%c", ' ');
       }
+      wclear(program_window);
+      box(program_window, 0, 0);
 
       for( int l = 0; l < 16; l++ ) {
         mvwprintw(memory_window, l+1, 1, "V[0x%x] = 0x%02x", l, emu.V[l]);
@@ -86,11 +89,15 @@ int main() {
 
       for( int l = -28; l < 29; l += 2 ) {
         if( l != 0 )
-          mvwprintw(program_window, l/2+1+14, 1, "%03d | 0x%02x%02x", l/2, 
-                    emu.memory[emu.pc+l], emu.memory[emu.pc+l+1]);
+          mvwprintw(program_window, l/2+1+14, 1, "%03d | 0x%02x%02x      %s", l/2, 
+                    emu.memory[emu.pc+l], emu.memory[emu.pc+l+1], 
+		    chip8::OpCode::as_string( 
+			    (emu.memory[emu.pc+l] << 8 )+emu.memory[emu.pc+l+1] ).c_str() );
         else 
-          mvwprintw(program_window, l/2+1+14, 1, "%03d | 0x%02x%02x <---", l/2, 
-                    emu.memory[emu.pc+l], emu.memory[emu.pc+l+1]);
+          mvwprintw(program_window, l/2+1+14, 1, "%03d | 0x%02x%02x <--- %s", l/2, 
+                    emu.memory[emu.pc+l], emu.memory[emu.pc+l+1],
+		    chip8::OpCode::as_string( 
+			    (emu.memory[emu.pc+l] << 8 )+emu.memory[emu.pc+l+1] ).c_str() );
       }
 
     }
