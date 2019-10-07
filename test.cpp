@@ -689,6 +689,20 @@ BOOST_AUTO_TEST_CASE(fx29_test) {
   BOOST_CHECK(emu.V[0xF] == 0x0);
 }
 
+BOOST_AUTO_TEST_CASE(regdump_test) {
+  chip8::emulator emu;
+  emu.initialize();
+  emu.delay_timer = 0x11;
+  emu.V[0x0] = 0x03;
+  emu.V[0x1] = 0x1A;
+  emu.I = 0x300;
+  emu.memory[0x200] = 0xF1;
+  emu.memory[0x201] = 0x55;
+  emu.emulateCycle();
+  BOOST_CHECK(emu.memory[0x300] == 0x03);
+  BOOST_CHECK(emu.memory[0x301] == 0x1A);
+  BOOST_CHECK(emu.memory[0x302] == 0x00);
+}
 
 BOOST_AUTO_TEST_CASE(key_test) {
   class keytest_interface : public chip8::KeyInterface {

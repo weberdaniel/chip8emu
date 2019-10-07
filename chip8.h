@@ -76,6 +76,60 @@ static std::string as_string(std::uint16_t opcode) {
   if( (opcode & 0xF00F) == 0x8007 ) {
     return "8XY7: VX = VY - VX";
   }
+  if( (opcode & 0xF00F) == 0x8007 ) {
+    return "8XY7: VX = VY - VX";
+  }
+  if( (opcode & 0xF00F) == 0x800E ) {
+    return "8XYE: VX <<= 1: MSB to VF, VX << 1";
+  }
+  if( (opcode & 0xF00F) == 0x9000 ) {
+    return "9XY0: Skip next if VX != VY";
+  }
+  if( (opcode & 0xF000) == 0xA000 ) {
+    return "ANNN: Set I to NNN";
+  }
+  if( (opcode & 0xF000) == 0xB000 ) {
+    return "BNNN: JMP to NNN+V0";
+  }
+  if( (opcode & 0xF000) == 0xC000 ) {
+    return "CXNN: VX = RAND() & NN";
+  }
+  if( (opcode & 0xF000) == 0xD000 ) {
+    return "DXYN: Draw Sprite (Vx,Vy) (w8,hN)";
+  }
+  if( (opcode & 0xF0FF) == 0xE09E ) {
+    return "EX9E: Skip if key Vx pressed";
+  }
+  if( (opcode & 0xF0FF) == 0xE0A1 ) {
+    return "EXA1: Skip if key Vx not pressed";
+  }
+  if( (opcode & 0xF0FF) == 0xF007 ) {
+    return "FX07: Set Vx to delay_timer";
+  }
+  if( (opcode & 0xF0FF) == 0xF00A ) {
+    return "FX0A: Vx = getkey() ";
+  }
+  if( (opcode & 0xF0FF) == 0xF015 ) {
+    return "FX15: delaytimer = Vx";
+  }
+  if( (opcode & 0xF0FF) == 0xF018 ) {
+    return "FX18: soundtimer = Vx";
+  }
+  if( (opcode & 0xF0FF) == 0xF01E ) {
+    return "FX1E: I += Vx";
+  }
+  if( (opcode & 0xF0FF) == 0xF029 ) {
+    return "FX29: I = spriteaddr[Vx]";
+  }
+  if( (opcode & 0xF0FF) == 0xF033 ) {
+    return "FX33: BCD of Vx to VI,VI+1,VI+2";
+  }
+  if( (opcode & 0xF0FF) == 0xF055 ) {
+    return "FX55: regdump(V0,VX) to MEM[I]";
+  }
+  if( (opcode & 0xF0FF) == 0xF065 ) {
+    return "FX65: regload(V0,VX) from MEM[I]";
+  }
   //TODO: implement all opcodes
   return "UNKONWN OPCODE";
 }
@@ -204,13 +258,13 @@ struct emulator {
 
     // FX55: Store V0 to VX in memory, starting at I.
     if ((opcode & 0xF0FF) == 0xF055) {
-      for (int i = 0; i <= (opcode & 0x0F00); i++) {
+      for (int i = 0; i <= ( (opcode & 0x0F00) >> 8); i++) {
         memory[I+i] = V[i];
       }
     }
 
     // FX65: Fill V0 to VX with values starting at I.
-    if ((opcode & 0xF0FF) == 0xF055) {
+    if ((opcode & 0xF0FF) == 0xF065) {
       for (int i = 0; i <= (opcode & 0x0F00); i++) {
         V[i] = memory[I+i];
       }
