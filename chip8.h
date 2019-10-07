@@ -47,13 +47,34 @@ static std::string as_string(std::uint16_t opcode) {
     return "5XY0: SKIP IF VX == VY";
   }
   if( (opcode & 0xF000) == 0x6000 ) {
-    return "6XNN: SET VX = NN";
+    return "6XNN: VX = NN";
   }
   if( (opcode & 0xF000) == 0x7000 ) {
-    return "6XNN: ADD VX += NN";
+    return "6XNN: VX += NN";
   }
   if( (opcode & 0xF00F) == 0x8000 ) {
-    return "8XY0: SET VX = VY";
+    return "8XY0: VX = VY";
+  }
+  if( (opcode & 0xF00F) == 0x8001 ) {
+    return "8XY1: VX = VX | VY";
+  }
+  if( (opcode & 0xF00F) == 0x8002 ) {
+    return "8XY2: VX = VX & VY";
+  }
+  if( (opcode & 0xF00F) == 0x8003 ) {
+    return "8XY3: VX = VX ^ VY";
+  }
+  if( (opcode & 0xF00F) == 0x8004 ) {
+    return "8XY4: VX += VY";
+  }
+  if( (opcode & 0xF00F) == 0x8005 ) {
+    return "8XY5: VX -= VY";
+  }
+  if( (opcode & 0xF00F) == 0x8006 ) {
+    return "8XY6: STORE LSB VX to VF, VX >> 1";
+  }
+  if( (opcode & 0xF00F) == 0x8007 ) {
+    return "8XY7: VX = VY - VX";
   }
   //TODO: implement all opcodes
   return "UNKONWN OPCODE";
