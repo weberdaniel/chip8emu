@@ -704,6 +704,24 @@ BOOST_AUTO_TEST_CASE(regdump_test) {
   BOOST_CHECK(emu.memory[0x302] == 0x00);
 }
 
+BOOST_AUTO_TEST_CASE(regload_test) {
+  chip8::emulator emu;
+  emu.initialize();
+  emu.delay_timer = 0x11;
+  emu.memory[0x300] = 0x03;
+  emu.memory[0x301] = 0x1A;
+  emu.memory[0x302] = 0x00;
+  emu.V[0x0] = 0x00;
+  emu.V[0x1] = 0x00;
+  emu.I = 0x300;
+  emu.memory[0x200] = 0xF1;
+  emu.memory[0x201] = 0x65;
+  emu.emulateCycle();
+  BOOST_CHECK(emu.V[0x0] == 0x03);
+  BOOST_CHECK(emu.V[0x1] == 0x1A);
+  BOOST_CHECK(emu.V[0x2] == 0x00);
+}
+
 BOOST_AUTO_TEST_CASE(key_test) {
   class keytest_interface : public chip8::KeyInterface {
   public:
@@ -877,22 +895,23 @@ BOOST_AUTO_TEST_CASE(test_store_bcd) {
   chip8::emulator emu;
   emu.initialize();
   emu.set_keyinterface(std::make_unique<keytest_interface>());
-  emu.I = 0x5;
+  emu.I = 0x300;
   emu.delay_timer = 0x11;
   emu.V[0x4] = 123;
   emu.V[0x5] = 0x0;
   emu.V[0x6] = 0x0;
   emu.V[0x7] = 0x0;
 
-  // Call subroutine at 0x300
   emu.memory[0x200] = 0xF4;
   emu.memory[0x201] = 0x33;
 
-  //call subroutine
   emu.emulateCycle();
 
   BOOST_CHECK(emu.V[0x4] == 123);
-  BOOST_CHECK(emu.V[0x5] == 1);
-  BOOST_CHECK(emu.V[0x6] == 2);
-  BOOST_CHECK(emu.V[0x7] == 3);
+  BOOST_CHECK(emu.V[0x5] == 0);
+  BOOST_CHECK(emu.V[0x6] == 0);
+  BOOST_CHECK(emu.V[0x7] == 0);
+  BOOST_CHECK(emu.memory[0x300] == 1);
+  BOOST_CHECK(emu.memory[0x301] == 2);
+  BOOST_CHECK(emu.memory[0x302] == 3);
 }
