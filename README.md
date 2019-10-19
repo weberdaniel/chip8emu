@@ -53,5 +53,3 @@ There are two 8-bit timer registers that continuously count down at 60 Hz. The d
 the game of waiting brief periods. While the sound timer is non-zero a tone will be emitted.
 Contains 8 8bit user-flag registers R0-R7. Cannot be directly used, but registers V0-V7 can be saved and
 loaded from. 
-
-## Hints
