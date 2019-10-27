@@ -1,6 +1,8 @@
 #include "chip8.h"
 #include <iostream>
 #include <memory>
+#include <chrono>
+#include <thread>
 #include <ncurses.h>
 #include <iostream>
 #include <fstream>
@@ -65,6 +67,7 @@ int main() {
   wrefresh(main_window);
   refresh();
 
+
   while(1) {
     emu.emulateCycle();
     for( int k = 0; k < 32; k++) {
@@ -74,7 +77,6 @@ int main() {
 	  else
             mvwprintw(main_window, k, m, "%c", ' ');
       }
-      wclear(program_window);
       box(program_window, 0, 0);
 
       for( int l = 0; l < 16; l++ ) {
@@ -89,26 +91,28 @@ int main() {
 
       for( int l = -28; l < 29; l += 2 ) {
         if( l != 0 )
-          mvwprintw(program_window, l/2+1+14, 1, "%03d | 0x%02x%02x      %s", l/2, 
+          mvwprintw(program_window, l/2+1+14, 1, "%03d | 0x%02x%02x      %40s", l/2, 
                     emu.memory[emu.pc+l], emu.memory[emu.pc+l+1], 
 		    chip8::OpCode::as_string( 
 			    (emu.memory[emu.pc+l] << 8 )+emu.memory[emu.pc+l+1] ).c_str() );
         else 
-          mvwprintw(program_window, l/2+1+14, 1, "%03d | 0x%02x%02x <--- %s", l/2, 
+          mvwprintw(program_window, l/2+1+14, 1, "%03d | 0x%02x%02x <--- %40s", l/2, 
                     emu.memory[emu.pc+l], emu.memory[emu.pc+l+1],
 		    chip8::OpCode::as_string( 
 			    (emu.memory[emu.pc+l] << 8 )+emu.memory[emu.pc+l+1] ).c_str() );
       }
 
     }
-
+    
     wrefresh(main_window);
     wrefresh(program_window);
     wrefresh(memory_window);
     refresh();
     timeout(-1);
-    int test = getch();
-    mvwprintw(memory_window, 10, 10, "getch = %d", test);
+    //int test = getch();
+    //mvwprintw(memory_window, 10, 10, "getch = %d", test);
+    flushinp();
+    std::this_thread::sleep_for(std::chrono::milliseconds(13));
   }
 
   int a = 0;
